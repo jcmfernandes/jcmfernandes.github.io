@@ -1,30 +1,41 @@
 ---
 layout: page
 permalink: /about/
-title: About the Theme
-tagline: Minimal Mistakes, a Jekyll Theme
-tags: [about, Jekyll, theme, responsive]
-modified: 9-9-2013
+title: About Me
+tagline: João Fernandes, a random software engineer
+tags: [fernandes, about, meta, self, developer, engineer]
+modified: 27-06-2014
 comments: true
 image:
-  feature: texture-feature-02.jpg
-  credit: Texture Lovers
-  creditlink: http://texturelovers.com
+  feature: slb2.jpg
+  credit: Pedro Cunha
+  creditlink: http://www.publico.pt/desporto/noticia/benfica-vai-colocar-a-venda-mais-bilhetes-para-a-final-da-taca-de-portugal-1595075
 ---
 
-Jekyll is pretty rad and figured releasing a cleaned up version of [my site](http://mademistakes.com)[^1] as a theme for others to hack and build on would be fun. So here be that theme --- I call it **Minimal Mistakes**, a responsive Jekyll theme with large featured images and solid typography. 
+## I'm a software engineer from Lisbon, Portugal.
 
-## Minimal Mistakes is all about:
+I have a masters degree in software engineering from [TU Lisbon](http://tecnico.ulisboa.pt) and a strong passion for technology. I nurture a deep care for my craft and I'm always seeking new ways improve my art.
 
-* Responsive templates. Looking good on mobile, tablet, and desktop.
-* Gracefully degrading in older browsers. Compatible with Internet Explorer 8+ and all modern browsers. 
-* Minimal embellishments --- content first.
-* Large feature images for posts and pages.
-* Author sidebar to pimp your bio, photo[^2], and social media links.
-* Simple and clear permalink structure *(ie: domain.com/category/post-title)*
+> “You may not want to hear it, but your critics are often the ones telling you they still love you and care about you, and want to make you better.”
+-- Randy Pausch
 
-<a markdown="0" href="{{ site.url }}/theme-setup" class="btn">Install Minimal Mistakes Theme</a>
+I already played lots of different roles in the industry. Project manager? Check. Safety critical systems researcher? Check. Kernel developer? Check. Web developer? Check. Embedded systems developer? Check. Novelty thrills me. I'm now developing cloud-based call center software at [Talkdesk](http://www.talkdesk.com), together with a truly awesome team.
 
-[^1]: Since open sourcing this theme I have released a couple other Jekyll themes. My website [Made Mistakes](http://mademistakes.com) is currently using a modified version of my [So Simple Theme](http://mmistakes.github.io/so-simple-theme/).
+<figure>
+  <a href="http://upload.wikimedia.org/wikipedia/commons/9/99/Vista_de_Lisboa.jpg"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Vista_de_Lisboa.jpg/800px-Vista_de_Lisboa.jpg"></a>
+  <figcaption><a href="http://www.flickr.com/photos/alex_deleon/8721767633/" title="A view of Lisbon, by Alexander De Leon Battista">A view of Lisbon, by Alexander De Leon Battista</a>.</figcaption>
+</figure>
 
-[^2]: Fancy avatars provided by [Brandon Mathis](http://brandonmathis.com/projects/fancy-avatars/demo/) under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
+## Trivia?
+
+In my free time I love to:
+
+* take care of my cars ('65 VW Beetle, '02 BMW 320d)
+* spoil my girlfriend, Catarina
+* play with my dog, Hikari
+* watch all kinds of automobile racing
+* watch as many [SL Benfica](http://www.slbenfica.pt) football matches as possible
+
+## Contact me
+
+Email me at *mail _youknowwhat_ joaofernandes _notacomma_ eu*
