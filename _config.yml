@@ -1,0 +1,28 @@
+source: source
+
+title: João Fernandes
+description: > # this means to ignore newlines
+  João Fernandes' website.
+
+plainwhite:
+  name: João Fernandes
+  social_links:
+    github: jcmfernandes
+    linkedIn: in/jcmfernandes
+  tagline: |
+    Software Engineer.
+  date_format: "%Y-%m-%d"
+  sitemap: true
+  navigation:
+    - title: Blog
+      url: '/'
+    - title: Resume
+      url: '/resume'
+
+theme: plainwhite
+
+plugins:
+  - jekyll-feed
+
+feed:
+  excerpt_only: true
