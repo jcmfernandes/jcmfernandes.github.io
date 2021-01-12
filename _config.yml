@@ -6,6 +6,7 @@ description: > # this means to ignore newlines
 
 plainwhite:
   name: João Fernandes
+  portfolio_image: "assets/portfolio.png"
   social_links:
     github: jcmfernandes
     linkedIn: in/jcmfernandes

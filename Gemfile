@@ -4,3 +4,4 @@ gem 'jekyll', "~> 3.8"
 gem 'jekyll-feed'
 gem 'plainwhite'
 gem 'rake'
+gem 'kramdown-parser-gfm'
