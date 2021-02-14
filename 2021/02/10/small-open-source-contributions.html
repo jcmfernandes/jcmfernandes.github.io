@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>small open source contributions</title>
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>small open source contributions | João Fernandes</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="small open source contributions" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Ruby 3 brought us exciting new ways of boosting concurrent execution. While the Ractor is enjoying most of the spotlight, I’m personally more excited about Fiber.set_scheduler. I’m not going to spend time explaining when Samuel Williams, who introduced it, delivered a great talk about it during the 2020’ RubyKaigi (virtual) conference." />
+<meta property="og:description" content="Ruby 3 brought us exciting new ways of boosting concurrent execution. While the Ractor is enjoying most of the spotlight, I’m personally more excited about Fiber.set_scheduler. I’m not going to spend time explaining when Samuel Williams, who introduced it, delivered a great talk about it during the 2020’ RubyKaigi (virtual) conference." />
+<meta property="og:site_name" content="João Fernandes" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-02-10T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="small open source contributions" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"/2021/02/10/small-open-source-contributions.html"},"description":"Ruby 3 brought us exciting new ways of boosting concurrent execution. While the Ractor is enjoying most of the spotlight, I’m personally more excited about Fiber.set_scheduler. I’m not going to spend time explaining when Samuel Williams, who introduced it, delivered a great talk about it during the 2020’ RubyKaigi (virtual) conference.","@type":"BlogPosting","url":"/2021/02/10/small-open-source-contributions.html","headline":"small open source contributions","dateModified":"2021-02-10T00:00:00+00:00","datePublished":"2021-02-10T00:00:00+00:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header ">
+      <div class="about-title">
+      <a href="/">
+        
+        <img src="/assets/portfolio.png" alt="João Fernandes" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/">João Fernandes</a>
+      </h2>
+      </div><p class="tagline">Software Engineer.
+</p></div>
+      
+      <ul class="social about-footer "><a href="https://github.com/jcmfernandes" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/jcmfernandes" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><a href="https://twitter.com/jcmfernandes" target="_blank">
+          <li>
+            <i class="icon-twitter-squared"></i>
+          </li>
+        </a></ul><nav class="navigation about-footer ">
+        <ul>
+          
+          <li>
+            <a href="/">Blog</a>
+          </li>
+          
+          <li>
+            <a href="/resume">Resume</a>
+          </li>
+          
+        </ul>
+      </nav><p class="about-footer ">&copy;
+        2021</p>
+    </section>
+    <section class="content">
+      <div class="post-container">
+  <a class="post-link" href="/2021/02/10/small-open-source-contributions.html">
+    <h2 class="post-title">small open source contributions</h2>
+  </a>
+  <div class="post-meta">
+    <div class="post-date"><i class="icon-calendar"></i>2021-02-10</div></div>
+  <div class="post">
+    <p>Ruby 3 brought us exciting new ways of boosting concurrent execution. While the <code class="language-plaintext highlighter-rouge">Ractor</code> is enjoying most of the spotlight, I’m personally more excited about <code class="language-plaintext highlighter-rouge">Fiber.set_scheduler</code>. I’m not going to spend time explaining when <a href="https://twitter.com/ioquatix">Samuel Williams</a>, who introduced it, delivered <a href="https://www.youtube.com/watch?v=Y29SSOS4UOc">a great talk</a> about it during the 2020’ RubyKaigi (virtual) conference.</p>
+
+<p>As I was learning about Ruby’s new <code class="language-plaintext highlighter-rouge">Fiber</code> scheduler, I came across <a href="https://github.com/socketry/nio4r"><code class="language-plaintext highlighter-rouge">nio4r</code></a>. This gem provides a cross-platform stateful I/O selector API for Ruby. It’s at the heart of projects such as <a href="https://github.com/puma/puma"><code class="language-plaintext highlighter-rouge">puma</code></a> and <a href="https://github.com/rails/rails/tree/main/actioncable"><code class="language-plaintext highlighter-rouge">actioncable</code></a>. Internally, it uses the system’s asynchronous I/O primitives.</p>
+
+<p>Modern operating systems provide a multitude of options when it comes to asynchronous I/O APIs, and in Linux land <a href="https://unixism.net/loti/what_is_io_uring.html"><code class="language-plaintext highlighter-rouge">io_uring</code></a> is the newest kid on the block. Synthetic benchmarks show very <a href="https://thenewstack.io/how-io_uring-and-ebpf-will-revolutionize-programming-in-linux/">promising results</a>. <code class="language-plaintext highlighter-rouge">nio4r</code> actually uses <a href="http://software.schmorp.de/pkg/libev.html"><code class="language-plaintext highlighter-rouge">libev</code></a> underneath which only recently - as of version 4.33 - started shipping with (experimental) support for <code class="language-plaintext highlighter-rouge">io_uring</code>. I noticed that <code class="language-plaintext highlighter-rouge">nio4r</code> didn’t yet include support for <code class="language-plaintext highlighter-rouge">io_uring</code> so <a href="https://github.com/socketry/nio4r/pull/256">I went ahead and added it</a> by upgrading its <code class="language-plaintext highlighter-rouge">libev</code> distribution. Following <code class="language-plaintext highlighter-rouge">libev</code>’s implementation, it’s marked as experimental and it will never be automatically selected as the best backend available on the system. We will hopefully get there soon.</p>
+
+<p>I then noticed that <code class="language-plaintext highlighter-rouge">puma</code> didn’t provide any way of specifying the desired I/O selector backend, and so again <a href="https://github.com/puma/puma/pull/2522">I went ahead added it</a>.</p>
+
+<p>Small improvements that were fun to work on!</p>
+
+  </div></div>
+
+    </section>
+    <footer class="">
+      <ul class="social about-footer "><a href="https://github.com/jcmfernandes" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/jcmfernandes" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><a href="https://twitter.com/jcmfernandes" target="_blank">
+          <li>
+            <i class="icon-twitter-squared"></i>
+          </li>
+        </a></ul><nav class="navigation about-footer ">
+        <ul>
+          
+          <li>
+            <a href="/">Blog</a>
+          </li>
+          
+          <li>
+            <a href="/resume">Resume</a>
+          </li>
+          
+        </ul>
+      </nav><p class="about-footer ">&copy;
+        2021</p>
+    </footer>
+  </main>
+  
+</body>
+
+</html>
