@@ -1,0 +1,7 @@
+/.local/
+/.devenv/
+/.devenv.flake.nix
+/devenv.local.nix
+/public/
+/straight/*
+!/straight/versions/
