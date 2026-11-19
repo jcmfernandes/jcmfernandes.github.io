@@ -59,8 +59,12 @@ in
       python3 -m http.server --directory public --bind 127.0.0.1 8000 &
       server=$!
       trap 'kill $server' EXIT
-      watchexec --watch content --watch static --watch templates --watch lisp --watch site.el \
-        -- ${emacs} -l lisp/site-build.el -f site-build
+      # Watch the whole repo, not individual dirs: a dir that gets deleted and
+      # re-created (e.g. by a git checkout) would silently drop its watch.
+      # Git-ignored paths (straight/, .devenv/) don't trigger rebuilds. public/
+      # is ignored explicitly: once deleted, `/public/' (dirs only) no longer
+      # matches it, and its removal would trigger another build.
+      watchexec --watch . --ignore public -- ${emacs} -l lisp/site-build.el -f site-build
     '';
   };
 }
