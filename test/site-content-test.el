@@ -83,4 +83,35 @@
   (let ((f (expand-file-name "missing.md" (make-temp-file "site-test" t))))
     (should (string-match-p "missing\\.md: pandoc failed"
                             (site-test--error-message (lambda () (site--pandoc f "-t" "html")))))))
+
+(ert-deftest site-render-org-markup ()
+  (let ((f (site-test--file "about.org" "#+TITLE: About\n\nSome *bold* text.\n")))
+    (should (string-match-p "<b>bold</b>" (site-render-body (site-read-item f 'page))))))
+
+(ert-deftest site-render-org-runs-babel ()
+  (let ((f (site-test--file "about.org"
+                            "#+TITLE: About\n\n#+begin_src emacs-lisp :exports both\n(* 6 7)\n#+end_src\n")))
+    (should (string-match-p "42" (site-render-body (site-read-item f 'page))))))
+
+(ert-deftest site-render-org-code-has-css-classes ()
+  (let ((f (site-test--file "about.org"
+                            "#+TITLE: About\n\n#+begin_src emacs-lisp\n(defun f () \"s\")\n#+end_src\n")))
+    (should (string-match-p "class=\"org-" (site-render-body (site-read-item f 'page))))))
+
+(ert-deftest site-render-org-failure-names-file ()
+  (let ((f (site-test--file "about.org" "#+TITLE: About\n\n#+INCLUDE: \"nope.org\"\n")))
+    (should (string-match-p "about\\.org: org export failed"
+                            (site-test--error-message
+                             (lambda () (site-render-body (site-read-item f 'page))))))))
+
+(ert-deftest site-render-md ()
+  (let* ((f (site-test--file "about.md" "---\ntitle: About\n---\n\nHello *world*.\n"))
+         (html (site-render-body (site-read-item f 'page))))
+    (should (string-match-p "<em>world</em>" html))
+    (should-not (string-match-p "title:" html))))
+
+(ert-deftest site-with-html-appends-html ()
+  (let ((f (site-test--file "about.md" "---\ntitle: About\n---\n\nHi.\n")))
+    (should (string-match-p "<p>Hi.</p>"
+                            (plist-get (site-with-html (site-read-item f 'page)) :html)))))
 ;;; site-content-test.el ends here

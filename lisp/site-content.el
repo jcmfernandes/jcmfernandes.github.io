@@ -114,5 +114,39 @@ Signal an error naming FILE if metadata is missing or invalid."
           :tags (plist-get meta :tags)
           :draft (plist-get meta :draft))))
 
+(defun site--org-html (file)
+  "Export Org FILE's body to an HTML fragment. Run Babel blocks.
+Signal an error naming FILE if export fails."
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   (mapcar (lambda (lang) (cons lang t)) site-babel-languages))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (setq default-directory (file-name-directory file))
+    (let ((org-mode-hook nil))
+      (org-mode))
+    (let ((org-export-use-babel t)
+          (org-confirm-babel-evaluate nil)
+          (org-babel-python-command "python3")
+          (org-export-with-toc nil)
+          (org-export-with-section-numbers nil)
+          (org-html-htmlize-output-type 'css)
+          (org-html-doctype "html5")
+          (org-html-html5-fancy t))
+      (condition-case e
+          (org-export-as 'html nil nil t)
+        (error (error "%s: org export failed: %s" file (error-message-string e)))))))
+
+(defun site-render-body (item)
+  "Return ITEM's body as an HTML fragment."
+  (let ((file (plist-get item :file)))
+    (if (eq (plist-get item :format) 'org)
+        (site--org-html file)
+      (site--pandoc file "-f" "markdown" "-t" "html"))))
+
+(defun site-with-html (item)
+  "Return ITEM with :html set to its rendered body."
+  (append item (list :html (site-render-body item))))
+
 (provide 'site-content)
 ;;; site-content.el ends here
