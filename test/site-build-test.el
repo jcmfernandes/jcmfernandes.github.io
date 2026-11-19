@@ -53,6 +53,13 @@
       (should (equal (mapcar (lambda (p) (plist-get p :slug)) (plist-get c :posts)) '("a")))
       (should-not (plist-get c :pages)))))
 
+(ert-deftest site-collect-two-index-files ()
+  (let ((root (site-test--tree
+               '(("content/index.org" . "#+TITLE: A\n")
+                 ("content/index.md" . "---\ntitle: B\n---\n")))))
+    (should (string-match-p "URL / already used"
+                            (cadr (should-error (site-collect root nil)))))))
+
 (ert-deftest site-collect-page-clashes-with-tags-index ()
   (let ((root (site-test--tree '(("content/tags.org" . "#+TITLE: Tags\n")))))
     (should (string-match-p "URL /tags/ already used"

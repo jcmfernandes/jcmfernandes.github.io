@@ -52,22 +52,22 @@
 Posts are newest first. Drafts are dropped unless DRAFTS is non-nil."
   (let* ((content (expand-file-name "content" root))
          (posts-dir (expand-file-name "posts" content))
-         (intro nil)
+         (intros nil)
          (pages nil)
          (posts (mapcar (lambda (f) (site-read-item f 'post))
                         (and (file-directory-p posts-dir)
                              (directory-files posts-dir t site--content-re)))))
     (dolist (f (directory-files content t site--content-re))
       (if (equal (site-slug f) "index")
-          (setq intro (site-read-item f 'index))
+          (push (site-read-item f 'index) intros)
         (push (site-read-item f 'page) pages)))
     (setq pages (nreverse pages))
     (unless drafts
       (setq pages (cl-remove-if (lambda (i) (plist-get i :draft)) pages)
             posts (cl-remove-if (lambda (i) (plist-get i :draft)) posts)))
     (setq posts (sort posts (lambda (a b) (string> (plist-get a :date) (plist-get b :date)))))
-    (site--check-unique-urls (append (and intro (list intro)) pages posts))
-    (list :intro intro :pages pages :posts posts)))
+    (site--check-unique-urls (append intros pages posts))
+    (list :intro (car intros) :pages pages :posts posts)))
 
 (defun site-tags (posts)
   "Return an alist (TAG . POSTS) sorted by TAG. POSTS keep input order."
