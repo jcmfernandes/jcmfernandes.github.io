@@ -80,8 +80,19 @@
 (defun site-test--build (drafts)
   "Build the fixture into a fresh temp dir. Return the dir."
   (let ((out (make-temp-file "site-out" t)))
-    (with-environment-variables (("SITE_BASE_URL" nil))
+    (with-environment-variables (("SITE_BASE_URL" nil) ("SITE_LIVE_RELOAD" nil))
       (site-build-site site-test-fixture out drafts))))
+
+(ert-deftest site-build-live-reload ()
+  (let ((plain (site-test--build nil))
+        (live (make-temp-file "site-out" t)))
+    (with-environment-variables (("SITE_BASE_URL" nil) ("SITE_LIVE_RELOAD" "1"))
+      (site-build-site site-test-fixture live nil))
+    (should-not (file-exists-p (expand-file-name ".build" plain)))
+    (should-not (string-match-p "<script" (site-test--read plain "index.html")))
+    (should (file-exists-p (expand-file-name ".build" live)))
+    (dolist (rel '("index.html" "about/index.html" "posts/hello/index.html"))
+      (should (string-match-p "<script>[^<]*'/\\.build'[^<]*</script>" (site-test--read live rel))))))
 
 (defun site-test--read (out rel)
   (with-temp-buffer
@@ -94,6 +105,7 @@
     (dolist (rel '("index.html" "about/index.html" "posts/hello/index.html"
                    "posts/other/index.html" "atom.xml" "style.css"))
       (should (file-exists-p (expand-file-name rel out))))
+    (should-not (file-exists-p (expand-file-name "tags" out)))
     (should-not (file-exists-p (expand-file-name "posts/wip/index.html" out)))))
 
 (ert-deftest site-build-drafts-flag ()
@@ -105,7 +117,6 @@
          (post (site-test--read out "posts/hello/index.html")))
     (should (string-prefix-p "<!doctype html>" index))
     (should (string-match-p "João Tester" index))
-    (should-not (file-exists-p (expand-file-name "tags" out)))
     (should (string-match-p "<b>here</b>" index))
     (should (string-match-p "href=\"/posts/hello/\"" index))
     (should (< (string-match "/posts/hello/" index) (string-match "/posts/other/" index)))

@@ -55,6 +55,7 @@ in
     after = [ "site:deps" ];
     exec = ''
       export SITE_BASE_URL=http://localhost:8000
+      export SITE_LIVE_RELOAD=1
       mkdir -p public
       python3 -m http.server --directory public --bind 127.0.0.1 8000 &
       server=$!

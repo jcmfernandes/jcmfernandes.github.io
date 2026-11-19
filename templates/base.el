@@ -20,6 +20,22 @@
                                posts)
                      '((tr () (td () "No posts yet.") (td () " ")))))))
 
+(defconst tpl--live-reload-js
+  "(function () {
+  var seen = null;
+  setInterval(function () {
+    fetch('/.build', {cache: 'no-store'})
+      .then(function (r) { return r.ok ? r.text() : null; })
+      .then(function (id) {
+        if (id === null) return;
+        if (seen === null) seen = id;
+        else if (id !== seen) location.reload();
+      })
+      .catch(function () {});
+  }, 1000);
+})();"
+  "Preview only: reload the page when /.build changes.")
+
 (defun tpl-base (title body)
   "Full page titled TITLE around BODY, a list of esxml nodes."
   `(html ((lang . "en"))
@@ -38,5 +54,7 @@
                           (img ((src . "/logo.webp") (alt . ,site-title)))))
                (main ((class . "around")) ,@body)
                ,(tpl-nav)
-               (footer () ,(format "|=[ EOF ]=---  %s" site-author)))))
+               (footer () ,(format "|=[ EOF ]=---  %s" site-author))
+               ,@(when site-live-reload
+                   `((script () (raw-string ,tpl--live-reload-js)))))))
 ;;; base.el ends here

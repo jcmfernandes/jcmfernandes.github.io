@@ -21,16 +21,20 @@
 (defvar site-title "Untitled" "Site title.")
 (defvar site-author "Anonymous" "Site author.")
 (defvar site-base-url "http://localhost:8000" "Absolute site URL, no trailing slash.")
+(defvar site-live-reload nil
+  "Non-nil (preview only): pages reload when /.build changes.")
 
 (defconst site--content-re "\\`[^.#].*\\.\\(org\\|md\\)\\'"
   "Content file names. Skips dotfiles and Emacs lock files (`.#x.org').")
 
 (defun site-load-config (root)
-  "Load ROOT/site.el. SITE_BASE_URL, when set and non-empty, wins."
+  "Load ROOT/site.el. SITE_BASE_URL, when set and non-empty, wins.
+SITE_LIVE_RELOAD=1 turns on `site-live-reload'."
   (let ((file (expand-file-name "site.el" root)))
     (unless (file-exists-p file)
       (error "%s: missing" file))
     (load file nil t))
+  (setq site-live-reload (equal (getenv "SITE_LIVE_RELOAD") "1"))
   (let ((env (getenv "SITE_BASE_URL")))
     (when (and env (not (string-empty-p env)))
       (setq site-base-url env)))
@@ -135,6 +139,9 @@ build leaves the previous output in place."
     (site--write (expand-file-name "atom.xml" out) atom)
     (when (file-directory-p static)
       (copy-directory static (file-name-as-directory out) nil t t))
+    ;; Written last, so open pages reload only once the build is complete.
+    (when site-live-reload
+      (site--write (expand-file-name ".build" out) (format "%f" (float-time))))
     out))
 
 (defun site-build ()
