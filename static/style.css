@@ -107,7 +107,8 @@ header { text-align: center; }
 .article img { max-width: 100%; height: auto; }
 /* 75 columns; shrink the font so narrow screens fit them all. */
 .article .banner {
-  margin: 1em 0;
+  width: fit-content;
+  margin: 1em auto;
   padding: 0;
   border: 0;
   border-radius: 0;
