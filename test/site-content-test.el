@@ -20,11 +20,10 @@
 
 (ert-deftest site-read-item-org-post ()
   (let* ((f (site-test--file "posts/2026-11-19-hello.org"
-                             "#+TITLE: Hello João\n#+DATE: <2026-11-19 Thu>\n#+FILETAGS: :lisp:emacs:\n#+DRAFT: t\n\nBody.\n"))
+                             "#+TITLE: Hello João\n#+DATE: <2026-11-19 Thu>\n#+DRAFT: t\n\nBody.\n"))
          (item (site-read-item f 'post)))
     (should (equal (plist-get item :title) "Hello João"))
     (should (equal (plist-get item :date) "2026-11-19"))
-    (should (equal (plist-get item :tags) '("lisp" "emacs")))
     (should (eq (plist-get item :draft) t))
     (should (eq (plist-get item :format) 'org))
     (should (equal (plist-get item :url) "/posts/hello/"))))
@@ -35,18 +34,13 @@
 
 (ert-deftest site-read-item-md-post ()
   (let* ((f (site-test--file "posts/other.md"
-                             "---\ntitle: \"A & B *x*\"\ndate: 2026-10-02\ntags: [lisp]\ndraft: true\n---\n\nBody.\n"))
+                             "---\ntitle: \"A & B *x*\"\ndate: 2026-10-02\ndraft: true\n---\n\nBody.\n"))
          (item (site-read-item f 'post)))
     (should (equal (plist-get item :title) "A & B x"))
     (should (equal (plist-get item :date) "2026-10-02"))
-    (should (equal (plist-get item :tags) '("lisp")))
     (should (eq (plist-get item :draft) t))
     (should (eq (plist-get item :format) 'md))
     (should (equal (plist-get item :url) "/posts/other/"))))
-
-(ert-deftest site-read-item-md-single-tag-string ()
-  (let ((f (site-test--file "posts/x.md" "---\ntitle: X\ndate: 2026-01-01\ntags: lisp\n---\n")))
-    (should (equal (plist-get (site-read-item f 'post) :tags) '("lisp")))))
 
 (ert-deftest site-read-item-page-and-index-urls ()
   (let ((about (site-test--file "about.org" "#+TITLE: About\n"))
@@ -71,11 +65,6 @@
 (ert-deftest site-read-item-invalid-date ()
   (let ((f (site-test--file "posts/x.md" "---\ntitle: X\ndate: 2026-13-01\n---\n")))
     (should (string-match-p "x\\.md: invalid date"
-                            (site-test--error-message (lambda () (site-read-item f 'post)))))))
-
-(ert-deftest site-read-item-invalid-tag ()
-  (let ((f (site-test--file "posts/x.org" "#+TITLE: X\n#+DATE: 2026-01-01\n#+FILETAGS: :Bad_Tag:\n")))
-    (should (string-match-p "x\\.org: invalid tag"
                             (site-test--error-message (lambda () (site-read-item f 'post)))))))
 
 (ert-deftest site-read-item-invalid-slug ()

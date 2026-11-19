@@ -1,6 +1,5 @@
 #+TITLE: Hello
 #+DATE: <2026-11-19 Thu>
-#+FILETAGS: :lisp:emacs:
 
 #+begin_src emacs-lisp :exports both
 (* 6 7)

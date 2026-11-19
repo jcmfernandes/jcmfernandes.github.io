@@ -5,14 +5,7 @@
   `(nav ((class . "nav"))
         ,@(mapcan (lambda (link)
                     (list "[ " `(a ((href . ,(cdr link))) ,(car link)) " ] "))
-                  '(("Blog" . "/") ("Tags" . "/tags/")
-                    ("About" . "/about/") ("RSS" . "/atom.xml")))))
-
-(defun tpl-tag-links (tags)
-  "Comma-separated links to TAGS' pages."
-  (cdr (mapcan (lambda (tag)
-                 (list ", " `(a ((href . ,(format "/tags/%s/" tag))) ,tag)))
-               tags)))
+                  '(("Blog" . "/") ("About" . "/about/") ("RSS" . "/atom.xml")))))
 
 (defun tpl-post-table (posts)
   "Blue table: post title left, date right."
