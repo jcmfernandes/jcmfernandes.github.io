@@ -91,6 +91,20 @@
                             "#+TITLE: About\n\n#+begin_src emacs-lisp\n(defun f () \"s\")\n#+end_src\n")))
     (should (string-match-p "class=\"org-keyword\"" (site-render-body (site-read-item f 'page))))))
 
+(ert-deftest site-render-org-site-absolute-links ()
+  (let* ((f (site-test--file "about.org"
+                             (concat "#+TITLE: About\n\n"
+                                     "[[/posts/hello/][Hello]] [[file:/posts/x/][X]]\n\n"
+                                     "[[/images/me.jpg]]\n\n"
+                                     "[[../posts/rel/][Rel]] [[https://example.com][Ext]]\n")))
+         (html (site-render-body (site-read-item f 'page))))
+    (should (string-match-p "href=\"/posts/hello/\"" html))
+    (should (string-match-p "href=\"/posts/x/\"" html))
+    (should (string-match-p "src=\"/images/me.jpg\"" html))
+    (should (string-match-p "href=\"\\.\\./posts/rel/\"" html))
+    (should (string-match-p "href=\"https://example.com\"" html))
+    (should-not (string-match-p "file://" html))))
+
 (ert-deftest site-render-org-failure-names-file ()
   (let ((f (site-test--file "about.org" "#+TITLE: About\n\n#+INCLUDE: \"nope.org\"\n")))
     (should (string-match-p "about\\.org: org export failed"

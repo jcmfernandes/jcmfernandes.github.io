@@ -107,6 +107,11 @@ Signal an error naming FILE if metadata is missing or invalid."
           :title title :date date
           :draft (plist-get meta :draft))))
 
+(defun site--org-site-links (text _backend _info)
+  "Turn Org's `file:///x' links into site-absolute `/x' in exported TEXT.
+Org reads `[[/posts/x/]]' as an absolute file path; on the site it is a URL."
+  (replace-regexp-in-string "\\(href\\|src\\)=\"file:///" "\\1=\"/" text))
+
 (defun site--org-html (file)
   "Export Org FILE's body to an HTML fragment. Run Babel blocks.
 Signal an error naming FILE if export fails."
@@ -125,7 +130,8 @@ Signal an error naming FILE if export fails."
           (org-export-with-section-numbers nil)
           (org-html-htmlize-output-type 'css)
           (org-html-doctype "html5")
-          (org-html-html5-fancy t))
+          (org-html-html5-fancy t)
+          (org-export-filter-link-functions '(site--org-site-links)))
       (condition-case e
           (org-export-as 'html nil nil t)
         (error (error "%s: org export failed: %s" file (error-message-string e)))))))
