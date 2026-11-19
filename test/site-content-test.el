@@ -96,7 +96,7 @@
 (ert-deftest site-render-org-code-has-css-classes ()
   (let ((f (site-test--file "about.org"
                             "#+TITLE: About\n\n#+begin_src emacs-lisp\n(defun f () \"s\")\n#+end_src\n")))
-    (should (string-match-p "class=\"org-" (site-render-body (site-read-item f 'page))))))
+    (should (string-match-p "class=\"org-keyword\"" (site-render-body (site-read-item f 'page))))))
 
 (ert-deftest site-render-org-failure-names-file ()
   (let ((f (site-test--file "about.org" "#+TITLE: About\n\n#+INCLUDE: \"nope.org\"\n")))
