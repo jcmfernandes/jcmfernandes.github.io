@@ -66,4 +66,66 @@
     (should (equal (car (xml-node-children
                          (car (xml-get-children (car (xml-get-children feed 'entry)) 'id))))
                    "https://example.com/posts/p25/"))))
+(defconst site-test-fixture (expand-file-name "fixture" site-test-dir))
+
+(defun site-test--build (drafts)
+  "Build the fixture into a fresh temp dir. Return the dir."
+  (let ((out (make-temp-file "site-out" t)))
+    (with-environment-variables (("SITE_BASE_URL" nil))
+      (site-build-site site-test-fixture out drafts))))
+
+(defun site-test--read (out rel)
+  (with-temp-buffer
+    (let ((coding-system-for-read 'utf-8))
+      (insert-file-contents (expand-file-name rel out)))
+    (buffer-string)))
+
+(ert-deftest site-build-writes-expected-files ()
+  (let ((out (site-test--build nil)))
+    (dolist (rel '("index.html" "about/index.html" "posts/hello/index.html"
+                   "posts/other/index.html" "tags/index.html" "tags/lisp/index.html"
+                   "tags/emacs/index.html" "atom.xml" "style.css"))
+      (should (file-exists-p (expand-file-name rel out))))
+    (should-not (file-exists-p (expand-file-name "posts/wip/index.html" out)))))
+
+(ert-deftest site-build-drafts-flag ()
+  (should (file-exists-p (expand-file-name "posts/wip/index.html" (site-test--build t)))))
+
+(ert-deftest site-build-page-contents ()
+  (let* ((out (site-test--build nil))
+         (index (site-test--read out "index.html"))
+         (post (site-test--read out "posts/hello/index.html")))
+    (should (string-prefix-p "<!doctype html>" index))
+    (should (string-match-p "João Tester" index))
+    (should (string-match-p "<b>here</b>" index))
+    (should (string-match-p "href=\"/posts/hello/\"" index))
+    (should (< (string-match "/posts/hello/" index) (string-match "/posts/other/" index)))
+    (should (string-match-p "href=\"/tags/lisp/\"" post))
+    (should (string-match-p "42" post))
+    (should-not (string-match-p "<[a-z]+[^>]*/>" (replace-regexp-in-string
+                                                   "<\\(meta\\|link\\)[^>]*/>" "" post)))))
+
+(ert-deftest site-build-feed ()
+  (let* ((out (site-test--build nil))
+         (feed (car (with-temp-buffer
+                      (insert (site-test--read out "atom.xml"))
+                      (xml-parse-region (point-min) (point-max))))))
+    (should (eq (car feed) 'feed))
+    (should (= (length (xml-get-children feed 'entry)) 2))
+    (should (string-match-p "https://example.com/posts/hello/" (site-test--read out "atom.xml")))))
+
+(ert-deftest site-build-base-url-override ()
+  (let ((out (make-temp-file "site-out" t)))
+    (with-environment-variables (("SITE_BASE_URL" "http://localhost:8000"))
+      (site-build-site site-test-fixture out nil))
+    (should (string-match-p "http://localhost:8000/posts/hello/"
+                            (site-test--read out "atom.xml")))))
+
+(ert-deftest site-build-error-keeps-old-output ()
+  (let ((out (site-test--build nil))
+        (root (site-test--tree '(("site.el" . "")
+                                 ("content/posts/x.org" . "#+TITLE: X\n")))))
+    (should-error (site-build-site root out nil))
+    (should (file-exists-p (expand-file-name "index.html" out)))))
+
 ;;; site-build-test.el ends here

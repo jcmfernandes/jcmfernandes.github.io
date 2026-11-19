@@ -104,5 +104,61 @@ Posts are newest first. Drafts are dropped unless DRAFTS is non-nil."
               (seq-take posts 20))))
    "\n"))
 
+(defun site-template-file (name)
+  "Return the contents of templates/NAME."
+  (with-temp-buffer
+    (insert-file-contents (expand-file-name (concat "templates/" name) site-repo-root))
+    (buffer-string)))
+
+(dolist (tpl '("base" "post" "page" "index" "tag"))
+  (load (expand-file-name (concat "templates/" tpl) site-repo-root) nil t))
+
+(defun site--write (file string)
+  "Write STRING to FILE as UTF-8, creating parent dirs."
+  (make-directory (file-name-directory file) t)
+  (let ((coding-system-for-write 'utf-8))
+    (write-region string nil file nil 'silent)))
+
+(defun site--write-page (out url esxml)
+  "Write ESXML as HTML to URL's index.html under OUT."
+  (site--write (expand-file-name "index.html"
+                                 (expand-file-name (string-remove-prefix "/" url) out))
+               (concat "<!doctype html>\n" (esxml-to-xml esxml) "\n")))
+
+(defun site-build-site (root out drafts)
+  "Build site ROOT into OUT. Include drafts if DRAFTS. Return OUT.
+Everything is read and rendered before OUT is touched, so a failing
+build leaves the previous output in place."
+  (site-load-config root)
+  (let* ((c (site-collect root drafts))
+         (intro (and (plist-get c :intro) (site-with-html (plist-get c :intro))))
+         (pages (mapcar #'site-with-html (plist-get c :pages)))
+         (posts (mapcar #'site-with-html (plist-get c :posts)))
+         (tags (site-tags posts))
+         (static (expand-file-name "static" root)))
+    (when (file-directory-p out)
+      (delete-directory out t))
+    (make-directory out t)
+    (dolist (page pages)
+      (site--write-page out (plist-get page :url) (tpl-page page)))
+    (dolist (post posts)
+      (site--write-page out (plist-get post :url) (tpl-post post)))
+    (site--write-page out "/" (tpl-index intro posts))
+    (dolist (entry tags)
+      (site--write-page out (format "/tags/%s/" (car entry)) (tpl-tag (car entry) (cdr entry))))
+    (site--write-page out "/tags/" (tpl-tags tags))
+    (site--write (expand-file-name "atom.xml" out) (site-atom posts))
+    (when (file-directory-p static)
+      (copy-directory static (file-name-as-directory out) nil t t))
+    out))
+
+(defun site-build ()
+  "Command-line entry: build the repo into public/.
+SITE_DRAFTS=true includes drafts. SITE_BASE_URL overrides the base URL."
+  (message "Built %s"
+           (site-build-site site-repo-root
+                            (expand-file-name "public" site-repo-root)
+                            (equal (getenv "SITE_DRAFTS") "true"))))
+
 (provide 'site-build)
 ;;; site-build.el ends here

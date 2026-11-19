@@ -26,4 +26,13 @@ in
     after = [ "site:deps" ];
     exec = "${emacs} -l test/run.el";
   };
+
+  tasks."site:build" = {
+    cwd = config.devenv.root;
+    after = [ "site:deps" ];
+    input = { drafts = false; };
+    exec = ''
+      SITE_DRAFTS=$(echo "$DEVENV_TASK_INPUT" | jq -r '.drafts') ${emacs} -l lisp/site-build.el -f site-build
+    '';
+  };
 }
