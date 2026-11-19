@@ -1,7 +1,7 @@
 #+TITLE: About
 
 #+begin_export html
-<img src="/images/me.jpg" alt="It's-a me, João!" width="400" height="400">
+<img src="/images/me.jpg" alt="It's-a me, João!" width="250" height="250">
 #+end_export
 
 @ Lisboa, Portugal, European Union
@@ -12,10 +12,12 @@ Email: joao [at] moreirafernandes.com
 
 \vert------
 
-Geek turned software engineer. I build at [[https://slashid.com][SlashID]] by day and at [[https://bckground.com][bckground labs]] by night.
+Geek turned software engineer. Blame the Zenith Data Systems 486 my dad brought home in 1992. When all I wanted was a SNES...
 
-I've been using Emacs for over 15 years but I don't know shit of elisp. NixOS is great but got into the same category.
+I build at [[https://slashid.com][SlashID]] by day and at [[https://bckground.com][bckground labs]] by night.
 
-I know too much about OAuth/OIDC so I'm not fun to be around. At least that's what my friends say.
+Successfully daily driving Emacs for over 15 years without knowing shit about Elisp. Same goes for NixOS.
 
-A midlife crisis made me into an amateur coffee snob. 
+However, I know too much about OAuth/OIDC, so I'm not fun to be around. At least that's what my friends say.
+
+A midlife crisis made me into an amateur coffee snob.
