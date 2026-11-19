@@ -1,3 +1,21 @@
 #+TITLE: About
 
-About me.
+#+begin_export html
+<img src="/images/me.jpg" alt="It's-a me, João!" width="400" height="400">
+#+end_export
+
+@ Lisboa, Portugal, European Union
+
+GitHub: https://github.com/jcmfernandes \\
+LinkedIn: https://www.linkedin.com/in/jcmfernandes/ \\
+Email: joao [at] moreirafernandes.com
+
+\vert------
+
+Geek turned software engineer. I build at [[https://slashid.com][SlashID]] by day and at [[https://bckground.com][bckground labs]] by night.
+
+I've been using Emacs for over 15 years but I don't know shit of elisp. NixOS is great but got into the same category.
+
+I know too much about OAuth/OIDC so I'm not fun to be around. At least that's what my friends say.
+
+A midlife crisis made me into an amateur coffee snob. 

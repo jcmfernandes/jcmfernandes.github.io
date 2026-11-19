@@ -1,6 +1,6 @@
-#+TITLE: Hello, world
+#+TITLE: I am
 #+DATE: <2026-11-19 Thu>
-#+FILETAGS: :meta:
+#+FILETAGS: :personal
 
 First post. Built by an Emacs Lisp generator.
 
