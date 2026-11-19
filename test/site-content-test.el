@@ -29,6 +29,10 @@
     (should (eq (plist-get item :format) 'org))
     (should (equal (plist-get item :url) "/posts/hello/"))))
 
+(ert-deftest site-read-item-org-draft-case-insensitive ()
+  (let ((f (site-test--file "posts/d.org" "#+TITLE: D\n#+DATE: 2026-01-01\n#+DRAFT: True\n")))
+    (should (eq (plist-get (site-read-item f 'post) :draft) t))))
+
 (ert-deftest site-read-item-md-post ()
   (let* ((f (site-test--file "posts/other.md"
                              "---\ntitle: \"A & B *x*\"\ndate: 2026-10-02\ntags: [lisp]\ndraft: true\n---\n\nBody.\n"))

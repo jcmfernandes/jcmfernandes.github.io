@@ -83,7 +83,7 @@ Signal an error naming FILE if pandoc fails."
         (list :title (get "TITLE")
               :date (get "DATE")
               :tags (and (get "FILETAGS") (split-string (get "FILETAGS") ":" t "[ \t]+"))
-              :draft (and (member (get "DRAFT") '("t" "true" "yes")) t))))))
+              :draft (and (get "DRAFT") (member-ignore-case (get "DRAFT") '("t" "true" "yes")) t))))))
 
 (defun site-read-item (file kind)
   "Return the item plist for FILE. KIND is `post', `page' or `index'.
