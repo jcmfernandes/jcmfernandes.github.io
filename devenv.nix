@@ -20,4 +20,10 @@ in
     exec = "${emacs} -l lisp/site-init.el -f site-deps";
     status = "test -f straight/.thawed && cmp -s straight/versions/default.el straight/.thawed";
   };
+
+  tasks."site:test" = {
+    cwd = config.devenv.root;
+    after = [ "site:deps" ];
+    exec = "${emacs} -l test/run.el";
+  };
 }
