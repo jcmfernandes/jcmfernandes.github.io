@@ -133,4 +133,11 @@
     (should-error (site-build-site root out nil))
     (should (file-exists-p (expand-file-name "index.html" out)))))
 
+(ert-deftest site-build-template-error-keeps-old-output ()
+  (let ((out (site-test--build nil)))
+    (cl-letf (((symbol-function 'tpl-post) (lambda (_) (error "boom"))))
+      (with-environment-variables (("SITE_BASE_URL" nil))
+        (should-error (site-build-site site-test-fixture out nil))))
+    (should (file-exists-p (expand-file-name "index.html" out)))))
+
 ;;; site-build-test.el ends here

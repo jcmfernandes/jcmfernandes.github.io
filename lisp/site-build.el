@@ -122,11 +122,9 @@ Posts are newest first. Drafts are dropped unless DRAFTS is non-nil."
   (let ((coding-system-for-write 'utf-8))
     (write-region string nil file nil 'silent)))
 
-(defun site--write-page (out url esxml)
-  "Write ESXML as HTML to URL's index.html under OUT."
-  (site--write (expand-file-name "index.html"
-                                 (expand-file-name (string-remove-prefix "/" url) out))
-               (concat "<!doctype html>\n" (esxml-to-xml esxml) "\n")))
+(defun site--page (url esxml)
+  "Return (URL . HTML) for ESXML rendered as a full HTML document."
+  (cons url (concat "<!doctype html>\n" (esxml-to-xml esxml) "\n")))
 
 (defun site-build-site (root out drafts)
   "Build site ROOT into OUT. Include drafts if DRAFTS. Return OUT.
@@ -138,19 +136,26 @@ build leaves the previous output in place."
          (pages (mapcar #'site-with-html (plist-get c :pages)))
          (posts (mapcar #'site-with-html (plist-get c :posts)))
          (tags (site-tags posts))
-         (static (expand-file-name "static" root)))
+         (static (expand-file-name "static" root))
+         (rendered
+          (append
+           (mapcar (lambda (page) (site--page (plist-get page :url) (tpl-page page))) pages)
+           (mapcar (lambda (post) (site--page (plist-get post :url) (tpl-post post))) posts)
+           (list (site--page "/" (tpl-index intro posts)))
+           (mapcar (lambda (entry)
+                     (site--page (format "/tags/%s/" (car entry))
+                                 (tpl-tag (car entry) (cdr entry))))
+                   tags)
+           (list (site--page "/tags/" (tpl-tags tags)))))
+         (atom (site-atom posts)))
     (when (file-directory-p out)
       (delete-directory out t))
     (make-directory out t)
-    (dolist (page pages)
-      (site--write-page out (plist-get page :url) (tpl-page page)))
-    (dolist (post posts)
-      (site--write-page out (plist-get post :url) (tpl-post post)))
-    (site--write-page out "/" (tpl-index intro posts))
-    (dolist (entry tags)
-      (site--write-page out (format "/tags/%s/" (car entry)) (tpl-tag (car entry) (cdr entry))))
-    (site--write-page out "/tags/" (tpl-tags tags))
-    (site--write (expand-file-name "atom.xml" out) (site-atom posts))
+    (pcase-dolist (`(,url . ,html) rendered)
+      (site--write (expand-file-name "index.html"
+                                     (expand-file-name (string-remove-prefix "/" url) out))
+                   html))
+    (site--write (expand-file-name "atom.xml" out) atom)
     (when (file-directory-p static)
       (copy-directory static (file-name-as-directory out) nil t t))
     out))
