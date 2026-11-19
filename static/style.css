@@ -31,12 +31,11 @@ a:hover, a:active { text-decoration: underline; }
 }
 
 header { text-align: center; }
-.logo pre {
+.logo img {
   display: inline-block;
-  text-align: left;
   margin: 20px 0;
-  font: 12px monospace;
-  color: var(--white);
+  max-width: 100%;
+  height: auto;
 }
 
 .around {

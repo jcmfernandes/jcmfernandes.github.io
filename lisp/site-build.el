@@ -96,12 +96,6 @@ Posts are newest first. Drafts are dropped unless DRAFTS is non-nil."
               (seq-take posts 20))))
    "\n"))
 
-(defun site-template-file (name)
-  "Return the contents of templates/NAME."
-  (with-temp-buffer
-    (insert-file-contents (expand-file-name (concat "templates/" name) site-repo-root))
-    (buffer-string)))
-
 (dolist (tpl '("base" "post" "page" "index"))
   (load (expand-file-name (concat "templates/" tpl) site-repo-root) nil t))
 

@@ -113,8 +113,10 @@
     (should-not (string-match-p "/tags/" index))
     (should-not (string-match-p "/tags/" post))
     (should (string-match-p "42" post))
+    (should (string-match-p "<img src=\"/logo.webp\" alt=\"Fixture\"/>" post))
+    (should (string-match-p "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\"/>" post))
     (should-not (string-match-p "<[a-z]+[^>]*/>" (replace-regexp-in-string
-                                                   "<\\(meta\\|link\\)[^>]*/>" "" post)))))
+                                                   "<\\(meta\\|link\\|img\\)[^>]*/>" "" post)))))
 
 (ert-deftest site-build-feed ()
   (let* ((out (site-test--build nil))

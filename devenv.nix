@@ -11,6 +11,7 @@ in
     pkgs.jq
     pkgs.watchexec
     pkgs.python3
+    pkgs.imagemagick
   ];
 
   # Install pinned Emacs packages. Skipped when the lockfile hasn't changed
@@ -33,6 +34,18 @@ in
     input = { drafts = false; };
     exec = ''
       SITE_DRAFTS=$(echo "$DEVENV_TASK_INPUT" | jq -r '.drafts') ${emacs} -l lisp/site-build.el -f site-build
+    '';
+  };
+
+  # Regenerate static/logo.webp and static/favicon.png from the ASCII art in
+  # templates/logo.txt and templates/favicon.txt.
+  tasks."site:logo" = {
+    cwd = config.devenv.root;
+    exec = ''
+      export LOGO_FONT=${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSansMono.ttf
+      bin/make-logo logo templates/logo.txt static/logo.webp \
+        "[ SINCE NINETEEN EIGHTY SEVEN : JOÃO MOREIRA FERNANDES ]"
+      bin/make-logo icon templates/favicon.txt static/favicon.png
     '';
   };
 

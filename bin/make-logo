@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Render ASCII art as a Phrack-style image (format from OUT extension).
+# `█' cells get a blue-cyan-yellow-green gradient; other glyphs are the shadow.
+# Usage: make-logo logo ART.txt OUT SUBTITLE   art with a subtitle line below
+#        make-logo icon ART.txt OUT            art centered on a 64x64 square
+# Needs $LOGO_FONT: a monospace TTF.
+set -euo pipefail
+
+mode=$1 art=$2 out=$3
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+render=(magick -background black -fill white -font "$LOGO_FONT")
+
+sed 's/[^█]/ /g' "$art" > "$tmp/blocks.txt"
+sed 's/█/ /g' "$art" > "$tmp/shadow.txt"
+"${render[@]}" +antialias -pointsize 24 -interline-spacing -6 label:@"$tmp/blocks.txt" "$tmp/blocks.png"
+"${render[@]}" +antialias -pointsize 24 -interline-spacing -6 label:@"$tmp/shadow.txt" "$tmp/shadow.png"
+
+read -r w h < <(magick identify -format '%w %h\n' "$tmp/blocks.png")
+q=$((h / 4))
+magick \
+  \( -size "${w}x$q" gradient:'#0000aa'-'#55ffff' \) \
+  \( -size "${w}x$q" gradient:'#55ffff'-'#ffff55' \) \
+  \( -size "${w}x$q" gradient:'#ffff55'-'#55ff55' \) \
+  \( -size "${w}x$((h - 3 * q))" gradient:'#55ff55'-'#00aaaa' \) \
+  -append "$tmp/grad.png"
+
+magick "$tmp/grad.png" "$tmp/blocks.png" -compose multiply -composite "$tmp/b.png"
+magick -size "${w}x$h" xc:'#5555ff' "$tmp/shadow.png" -compose multiply -composite "$tmp/s.png"
+magick "$tmp/b.png" "$tmp/s.png" -compose lighten -composite "$tmp/art.png"
+
+case $mode in
+  logo)
+    "${render[@]}" -fill '#aaaaaa' -pointsize 14 label:"$4" "$tmp/sub.png"
+    magick "$tmp/art.png" -bordercolor black -border 20x10 \
+      \( "$tmp/sub.png" -bordercolor black -border 0x8 \) \
+      -background black -gravity center -append +repage \
+      -bordercolor black -border 10 -depth 8 -strip -define webp:lossless=true "$out"
+    ;;
+  icon)
+    magick "$tmp/art.png" -trim +repage -bordercolor black -border 3 \
+      -background black -gravity center \
+      -extent "%[fx:max(w,h)]x%[fx:max(w,h)]" \
+      -filter box -resize 64x64 -depth 8 -strip "$out"
+    ;;
+  *)
+    echo "make-logo: unknown mode: $mode (use logo or icon)" >&2
+    exit 2
+    ;;
+esac
