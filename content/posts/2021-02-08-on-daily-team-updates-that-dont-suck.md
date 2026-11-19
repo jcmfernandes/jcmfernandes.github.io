@@ -1,8 +1,7 @@
 ---
-layout: post
 title: on daily team updates that don't suck
 date: 2021-02-08
-draft: true
+tags: [teams, communication]
 ---
 
 **Daily team updates aren't status updates.** There, I said it. If that's not how you feel then something is wrong. Furthermore, daily team updates are a safety net, the last line of defense against under-communication. **Don't wait for your next daily team update to say something to the team or to someone**. Just go ahead and say it ASAP.
