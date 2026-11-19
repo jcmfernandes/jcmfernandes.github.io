@@ -26,7 +26,10 @@
 
 (defun site-load-config (root)
   "Load ROOT/site.el. SITE_BASE_URL, when set and non-empty, wins."
-  (load (expand-file-name "site.el" root) nil t)
+  (let ((file (expand-file-name "site.el" root)))
+    (unless (file-exists-p file)
+      (error "%s: missing" file))
+    (load file nil t))
   (let ((env (getenv "SITE_BASE_URL")))
     (when (and env (not (string-empty-p env)))
       (setq site-base-url env)))

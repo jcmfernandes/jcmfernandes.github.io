@@ -17,6 +17,11 @@
       (site-load-config root)
       (should (equal site-base-url "http://localhost:8000")))))
 
+(ert-deftest site-load-config-missing-site-el ()
+  (let ((root (site-test--tree '(("content/.keep" . "")))))
+    (should (string-match-p "site\\.el: missing"
+                            (cadr (should-error (site-load-config root)))))))
+
 (ert-deftest site-collect-sorts-and-drops-drafts ()
   (let* ((root (site-test--tree
                 '(("content/index.org" . "#+TITLE: Home\n")
