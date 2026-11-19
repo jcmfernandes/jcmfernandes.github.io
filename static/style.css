@@ -1,0 +1,122 @@
+/* Palette taken from phrack.org. */
+:root {
+  --black: #000;
+  --blue: #00a;
+  --cyan: #0aa;
+  --gray: #555;
+  --silver: #aaa;
+  --bright-blue: #55f;
+  --bright-cyan: #5ff;
+  --white: #fff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 2px;
+  background: var(--black);
+  color: var(--white);
+  font: 12px sans-serif;
+}
+
+a:link, a:visited { color: var(--white); font-weight: 700; text-decoration: none; }
+a:hover, a:active { text-decoration: underline; }
+
+.nav {
+  text-align: center;
+  letter-spacing: 1px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px;
+}
+
+header { text-align: center; }
+.logo pre {
+  display: inline-block;
+  text-align: left;
+  margin: 20px 0;
+  font: 12px monospace;
+  color: var(--white);
+}
+
+.around {
+  display: block;
+  max-width: 685px;
+  margin: 0 auto;
+  border: 1px solid var(--gray);
+  padding: 1px;
+}
+
+.opt {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 400;
+  background: var(--cyan);
+  color: var(--black);
+  border-bottom: 1px solid var(--black);
+  padding: 4px 4px 4px 6px;
+}
+
+.opt-bottom {
+  background: var(--silver);
+  color: var(--black);
+  border-bottom: 1px solid var(--black);
+  padding: 4px 4px 4px 6px;
+}
+
+.opt a, .opt-bottom a { color: var(--black); }
+
+.tissue {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 11px;
+}
+.tissue td {
+  padding: 3px 5px;
+  vertical-align: top;
+  color: var(--white);
+  background: color-mix(in srgb, var(--bright-blue) 70%, var(--blue));
+  border-bottom: 1px solid var(--gray);
+}
+.tissue tr:nth-child(odd) td { background: var(--blue); }
+.tissue td:last-child { text-align: right; white-space: nowrap; }
+.tissue a { font-weight: 400; }
+.tissue tr:hover td { background: var(--black); color: var(--bright-cyan); }
+.tissue tr:hover a { color: var(--bright-cyan); }
+
+.framed { border-top: 1px solid var(--black); border-bottom: 2px solid var(--black); }
+
+.article {
+  display: block;
+  background: var(--white);
+  color: var(--black);
+  font: 12px/1.5 monospace;
+  padding: 5px 20px 20px;
+  overflow-x: auto;
+}
+.article a:link, .article a:visited { color: var(--blue); }
+.article pre {
+  background: #f4f4f4;
+  border: 1px solid var(--black);
+  padding: 8px;
+  overflow-x: auto;
+}
+.article img { max-width: 100%; height: auto; }
+
+footer {
+  max-width: 685px;
+  margin: 0 auto;
+  text-align: right;
+  border-top: 1px solid var(--gray);
+  padding: 4px;
+  font-size: 10px;
+}
+
+/* Code: Org (htmlize classes) and pandoc (short classes). */
+.org-keyword, .kw, .cf { color: var(--blue); font-weight: 700; }
+.org-string, .st { color: #a50; }
+.org-comment, .org-comment-delimiter, .co { color: var(--gray); font-style: italic; }
+.org-function-name, .fu, .bu { color: #0a0; }
+.org-type, .dt { color: #a0a; }
+.org-constant, .dv, .cn { color: #a00; }

@@ -1,0 +1,9 @@
+#+TITLE: Hello, world
+#+DATE: <2026-11-19 Thu>
+#+FILETAGS: :meta:
+
+First post. Built by an Emacs Lisp generator.
+
+#+begin_src emacs-lisp :exports both
+(format "%s + %s = %s" 2 2 (+ 2 2))
+#+end_src
