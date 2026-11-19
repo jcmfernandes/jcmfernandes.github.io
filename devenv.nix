@@ -35,4 +35,19 @@ in
       SITE_DRAFTS=$(echo "$DEVENV_TASK_INPUT" | jq -r '.drafts') ${emacs} -l lisp/site-build.el -f site-build
     '';
   };
+
+  # Serve public/ on localhost:8000 and rebuild on change. Ctrl-C stops both.
+  tasks."site:preview" = {
+    cwd = config.devenv.root;
+    after = [ "site:deps" ];
+    exec = ''
+      export SITE_BASE_URL=http://localhost:8000
+      mkdir -p public
+      python3 -m http.server --directory public --bind 127.0.0.1 8000 &
+      server=$!
+      trap 'kill $server' EXIT
+      watchexec --watch content --watch static --watch templates --watch lisp --watch site.el \
+        -- ${emacs} -l lisp/site-build.el -f site-build
+    '';
+  };
 }
