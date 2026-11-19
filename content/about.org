@@ -1,4 +1,5 @@
 #+TITLE: About
+#+OPTIONS: -:nil
 
 #+begin_export html
 <img src="/images/me.jpg" alt="It's-a me, João!" width="250" height="250">
