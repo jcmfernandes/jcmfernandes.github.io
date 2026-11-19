@@ -93,6 +93,7 @@ header { text-align: center; }
   font: 12px/1.5 monospace;
   padding: 5px 20px 20px;
   overflow-x: auto;
+  container-type: inline-size;
 }
 .article a:link, .article a:visited { color: var(--blue); }
 .article pre {
@@ -103,6 +104,18 @@ header { text-align: center; }
   overflow-x: auto;
 }
 .article img { max-width: 100%; height: auto; }
+/* 75 columns; shrink the font so narrow screens fit them all. */
+.article .banner {
+  margin: 1em 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  overflow: hidden;
+  line-height: 1.2;
+  font-size: min(12px, 100cqi / 75 / 0.61);
+  font-variant-ligatures: none;
+}
 
 footer {
   max-width: 685px;

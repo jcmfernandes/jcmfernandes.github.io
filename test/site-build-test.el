@@ -8,6 +8,25 @@
   (list :kind 'post :slug slug :url (format "/posts/%s/" slug)
         :title (upcase slug) :date date :tags tags :html "<p>x</p>"))
 
+(ert-deftest tpl-banner-matches-phrack ()
+  (should (equal (tpl-banner "Painting Out of the Box:")
+                 (concat
+                  "|=-----------------------------------------------------------------------=|\n"
+                  "|=--------------------=[ Painting Out of the Box: ]=---------------------=|\n"
+                  "|=-----------------------------------------------------------------------=|"))))
+
+(ert-deftest tpl-banner-wraps-long-titles ()
+  (let* ((title (concat "Escaping the Chromium Renderer Sandbox via Skia "
+                        "and Some More Words to Force a Wrap"))
+         (lines (split-string (tpl-banner title) "\n")))
+    (should (= (length lines) 4))
+    (dolist (line lines) (should (= (string-width line) 75)))
+    (should (equal (mapconcat (lambda (line)
+                                (and (string-match "=\\[ \\(.*\\) \\]=" line)
+                                     (match-string 1 line)))
+                              (butlast (cdr lines)) " ")
+                   title))))
+
 (ert-deftest site-load-config-env-override ()
   (let ((root (site-test--tree '(("site.el" . ";; -*- lexical-binding: t -*-\n(setq site-base-url \"https://example.com/\")")))))
     (with-environment-variables (("SITE_BASE_URL" nil))
@@ -140,6 +159,7 @@
     (should-not (string-match-p "href=\"/tags/\"" index))
     (should (string-match-p "href=\"/tags/lisp/\"" post))
     (should (string-match-p "42" post))
+    (should (string-match-p "<article[^>]*><pre class=\"banner\">|=-+=|\n|=-+=\\[ Hello \\]=-+=|" post))
     (should (string-match-p "<img src=\"/logo.webp\" alt=\"Fixture\"/>" post))
     (should (string-match-p "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\"/>" post))
     (should-not (string-match-p "<[a-z]+[^>]*/>" (replace-regexp-in-string
