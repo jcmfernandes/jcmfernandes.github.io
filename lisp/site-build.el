@@ -22,7 +22,8 @@
 (defvar site-author "Anonymous" "Site author.")
 (defvar site-base-url "http://localhost:8000" "Absolute site URL, no trailing slash.")
 
-(defconst site--content-re "\\.\\(org\\|md\\)\\'")
+(defconst site--content-re "\\`[^.#].*\\.\\(org\\|md\\)\\'"
+  "Content file names. Skips dotfiles and Emacs lock files (`.#x.org').")
 
 (defun site-load-config (root)
   "Load ROOT/site.el. SITE_BASE_URL, when set and non-empty, wins."

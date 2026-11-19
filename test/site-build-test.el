@@ -44,6 +44,15 @@
     (should (string-match-p "URL /posts/hello/ already used"
                             (cadr (should-error (site-collect root nil)))))))
 
+(ert-deftest site-collect-ignores-lock-files ()
+  (let ((root (site-test--tree
+               '(("content/posts/a.org" . "#+TITLE: A\n#+DATE: 2026-01-01\n")
+                 ("content/.#about.org" . "")))))
+    (make-symbolic-link "user@host.123:456" (expand-file-name "content/posts/.#a.org" root))
+    (let ((c (site-collect root nil)))
+      (should (equal (mapcar (lambda (p) (plist-get p :slug)) (plist-get c :posts)) '("a")))
+      (should-not (plist-get c :pages)))))
+
 (ert-deftest site-collect-page-clashes-with-tags-index ()
   (let ((root (site-test--tree '(("content/tags.org" . "#+TITLE: Tags\n")))))
     (should (string-match-p "URL /tags/ already used"
