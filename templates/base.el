@@ -7,8 +7,14 @@
                     (list "[ " `(a ((href . ,(cdr link))) ,(car link)) " ] "))
                   '(("Blog" . "/") ("About" . "/about/") ("RSS" . "/atom.xml")))))
 
+(defun tpl-tag-links (tags)
+  "Comma-separated links to TAGS' pages."
+  (cdr (mapcan (lambda (tag)
+                 (list ", " `(a ((href . ,(format "/tags/%s/" tag))) ,tag)))
+               tags)))
+
 (defun tpl-post-table (posts)
-  "Blue table: post title left, date right."
+  "Blue table: post title, tags, date."
   `(table ((class . "tissue"))
           (tbody ()
                  ,@(if posts
@@ -16,9 +22,11 @@
                                  `(tr ()
                                       (td () (a ((href . ,(plist-get post :url)))
                                                 ,(plist-get post :title)))
+                                      (td () ,@(or (tpl-tag-links (plist-get post :tags))
+                                                   '(" ")))
                                       (td () ,(plist-get post :date))))
                                posts)
-                     '((tr () (td () "No posts yet.") (td () " ")))))))
+                     '((tr () (td () "No posts yet.") (td () " ") (td () " ")))))))
 
 (defconst tpl--live-reload-js
   "(function () {

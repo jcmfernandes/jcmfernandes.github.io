@@ -41,8 +41,9 @@ SITE_LIVE_RELOAD=1 turns on `site-live-reload'."
   (setq site-base-url (string-trim-right site-base-url "/+")))
 
 (defun site--check-unique-urls (items)
-  "Signal an error if two ITEMS share a URL."
+  "Signal an error if two ITEMS, or an item and a generated page, share a URL."
   (let ((seen (make-hash-table :test #'equal)))
+    (puthash "/tags/" "the generated tags index" seen)
     (dolist (item items)
       (let* ((url (plist-get item :url))
              (prev (gethash url seen)))
@@ -72,6 +73,17 @@ Posts are newest first. Drafts are dropped unless DRAFTS is non-nil."
     (site--check-unique-urls (append intros pages posts))
     (list :intro (car intros) :pages pages :posts posts)))
 
+(defun site-tags (posts)
+  "Return an alist (TAG . POSTS) sorted by TAG. POSTS keep input order."
+  (let (alist)
+    (dolist (post posts)
+      (dolist (tag (plist-get post :tags))
+        (let ((cell (assoc tag alist)))
+          (if cell
+              (setcdr cell (append (cdr cell) (list post)))
+            (push (list tag post) alist)))))
+    (sort alist (lambda (a b) (string< (car a) (car b))))))
+
 (defun site--rfc3339 (date)
   "Turn \"YYYY-MM-DD\" into an RFC 3339 timestamp at midnight UTC."
   (concat date "T00:00:00Z"))
@@ -100,7 +112,7 @@ Posts are newest first. Drafts are dropped unless DRAFTS is non-nil."
               (seq-take posts 20))))
    "\n"))
 
-(dolist (tpl '("base" "post" "page" "index"))
+(dolist (tpl '("base" "post" "page" "index" "tag"))
   (load (expand-file-name (concat "templates/" tpl) site-repo-root) nil t))
 
 (defun site--write (file string)
@@ -122,12 +134,18 @@ build leaves the previous output in place."
          (intro (and (plist-get c :intro) (site-with-html (plist-get c :intro))))
          (pages (mapcar #'site-with-html (plist-get c :pages)))
          (posts (mapcar #'site-with-html (plist-get c :posts)))
+         (tags (site-tags posts))
          (static (expand-file-name "static" root))
          (rendered
           (append
            (mapcar (lambda (page) (site--page (plist-get page :url) (tpl-page page))) pages)
            (mapcar (lambda (post) (site--page (plist-get post :url) (tpl-post post))) posts)
-           (list (site--page "/" (tpl-index intro posts)))))
+           (list (site--page "/" (tpl-index intro posts)))
+           (mapcar (lambda (entry)
+                     (site--page (format "/tags/%s/" (car entry))
+                                 (tpl-tag (car entry) (cdr entry))))
+                   tags)
+           (list (site--page "/tags/" (tpl-tags tags)))))
          (atom (site-atom posts)))
     (when (file-directory-p out)
       (delete-directory out t))

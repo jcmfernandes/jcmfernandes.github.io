@@ -4,9 +4,9 @@
 (require 'site-test-helper)
 (require 'site-build)
 
-(defun site-test--post (slug date)
+(defun site-test--post (slug date &optional tags)
   (list :kind 'post :slug slug :url (format "/posts/%s/" slug)
-        :title (upcase slug) :date date :html "<p>x</p>"))
+        :title (upcase slug) :date date :tags tags :html "<p>x</p>"))
 
 (ert-deftest site-load-config-env-override ()
   (let ((root (site-test--tree '(("site.el" . ";; -*- lexical-binding: t -*-\n(setq site-base-url \"https://example.com/\")")))))
@@ -60,6 +60,18 @@
     (should (string-match-p "URL / already used"
                             (cadr (should-error (site-collect root nil)))))))
 
+(ert-deftest site-collect-page-clashes-with-tags-index ()
+  (let ((root (site-test--tree '(("content/tags.org" . "#+TITLE: Tags\n")))))
+    (should (string-match-p "URL /tags/ already used"
+                            (cadr (should-error (site-collect root nil)))))))
+
+(ert-deftest site-tags-groups-and-sorts ()
+  (let* ((a (site-test--post "a" "2026-02-01" '("lisp" "emacs")))
+         (b (site-test--post "b" "2026-01-01" '("lisp")))
+         (tags (site-tags (list a b))))
+    (should (equal (mapcar #'car tags) '("emacs" "lisp")))
+    (should (equal (cdr (assoc "lisp" tags)) (list a b)))))
+
 (ert-deftest site-atom-limits-and-uses-absolute-urls ()
   (let* ((site-base-url "https://example.com")
          (posts (cl-loop for i from 25 downto 1
@@ -103,9 +115,9 @@
 (ert-deftest site-build-writes-expected-files ()
   (let ((out (site-test--build nil)))
     (dolist (rel '("index.html" "about/index.html" "posts/hello/index.html"
-                   "posts/other/index.html" "atom.xml" "style.css"))
+                   "posts/other/index.html" "tags/index.html" "tags/lisp/index.html"
+                   "tags/emacs/index.html" "atom.xml" "style.css"))
       (should (file-exists-p (expand-file-name rel out))))
-    (should-not (file-exists-p (expand-file-name "tags" out)))
     (should-not (file-exists-p (expand-file-name "posts/wip/index.html" out)))))
 
 (ert-deftest site-build-drafts-flag ()
@@ -120,9 +132,13 @@
     (should (string-match-p "<b>here</b>" index))
     (should (string-match-p "href=\"/posts/hello/\"" index))
     (should (< (string-match "/posts/hello/" index) (string-match "/posts/other/" index)))
-    (should (string-match-p "href=\"/posts/hello/\">Hello</a></td><td>2026-11-19</td>" index))
-    (should-not (string-match-p "/tags/" index))
-    (should-not (string-match-p "/tags/" post))
+    (should (string-match-p (concat "href=\"/posts/hello/\">Hello</a></td>"
+                                    "<td><a href=\"/tags/lisp/\">lisp</a>, "
+                                    "<a href=\"/tags/emacs/\">emacs</a></td>"
+                                    "<td>2026-11-19</td>")
+                            index))
+    (should-not (string-match-p "href=\"/tags/\"" index))
+    (should (string-match-p "href=\"/tags/lisp/\"" post))
     (should (string-match-p "42" post))
     (should (string-match-p "<img src=\"/logo.webp\" alt=\"Fixture\"/>" post))
     (should (string-match-p "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\"/>" post))
