@@ -94,6 +94,7 @@ header { text-align: center; }
   padding: 5px 20px 20px;
   overflow-x: auto;
   container-type: inline-size;
+  font-variant-ligatures: none;
 }
 .article a:link, .article a:visited { color: var(--blue); }
 .article pre {
@@ -114,7 +115,6 @@ header { text-align: center; }
   overflow: hidden;
   line-height: 1.2;
   font-size: min(12px, 100cqi / 75 / 0.61);
-  font-variant-ligatures: none;
 }
 
 footer {
