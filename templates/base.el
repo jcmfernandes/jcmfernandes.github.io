@@ -51,7 +51,10 @@
                (meta ((charset . "utf-8")))
                (meta ((name . "viewport") (content . "width=device-width,initial-scale=1")))
                (title () ,(format ".:: %s ::." title))
-               (link ((rel . "stylesheet") (href . "/style.css")))
+               (link ((rel . "stylesheet")
+                      (href . ,(if site-css-version
+                                   (concat "/style.css?v=" site-css-version)
+                                 "/style.css"))))
                (link ((rel . "icon") (type . "image/png") (href . "/favicon.png")))
                (link ((rel . "alternate") (type . "application/atom+xml")
                       (href . "/atom.xml") (title . ,site-title))))

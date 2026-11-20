@@ -170,6 +170,13 @@
     (should (string-match-p "42" post))
     (should (string-match-p "<article[^>]*><pre class=\"banner banner-wide\">|=-\\{71\\}=|\n|=-+=\\[ Hello \\]=-+=|" post))
     (should (string-match-p "<pre class=\"banner banner-narrow\">|=-\\{38\\}=|\n|=-+=\\[ Hello \\]=-+=|" post))
+    (let ((css (with-temp-buffer
+                 (insert-file-contents-literally
+                  (expand-file-name "static/style.css" site-test-fixture))
+                 (buffer-string))))
+      (should (string-match-p (concat "href=\"/style.css\\?v="
+                                      (substring (secure-hash 'sha256 css) 0 10) "\"")
+                              post)))
     (should (string-match-p "<img src=\"/logo.webp\" alt=\"Fixture\"/>" post))
     (should (string-match-p "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\"/>" post))
     (should-not (string-match-p "<[a-z]+[^>]*/>" (replace-regexp-in-string

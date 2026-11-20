@@ -24,6 +24,18 @@
 (defvar site-live-reload nil
   "Non-nil (preview only): pages reload when /.build changes.")
 
+(defvar site-css-version nil
+  "Fingerprint of static/style.css, appended to its URL so browsers
+fetch a fresh copy whenever it changes. Nil if there is no stylesheet.")
+
+(defun site--css-version (static)
+  "Return the fingerprint of STATIC/style.css, or nil if missing."
+  (let ((css (expand-file-name "style.css" static)))
+    (when (file-exists-p css)
+      (with-temp-buffer
+        (insert-file-contents-literally css)
+        (substring (secure-hash 'sha256 (current-buffer)) 0 10)))))
+
 (defconst site--content-re "\\`[^.#].*\\.\\(org\\|md\\)\\'"
   "Content file names. Skips dotfiles and Emacs lock files (`.#x.org').")
 
@@ -136,6 +148,7 @@ build leaves the previous output in place."
          (posts (mapcar #'site-with-html (plist-get c :posts)))
          (tags (site-tags posts))
          (static (expand-file-name "static" root))
+         (site-css-version (site--css-version static))
          (rendered
           (append
            (mapcar (lambda (page) (site--page (plist-get page :url) (tpl-page page))) pages)
