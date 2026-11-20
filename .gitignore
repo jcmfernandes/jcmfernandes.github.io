@@ -1,4 +1,4 @@
-/.local/
+/.local
 /.devenv/
 /.devenv.flake.nix
 /devenv.local.nix
