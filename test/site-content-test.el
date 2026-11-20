@@ -134,6 +134,14 @@
     (should (string-match-p "<div class=\"important\"[^>]*>[[:space:]]*<p>[[:space:]]*A <b>hard</b> fork."
                             (site-render-body (site-read-item f 'page))))))
 
+(ert-deftest site-render-org-stable-ids ()
+  (let* ((f (site-test--file "about.org"
+                             "#+TITLE: About\n\n#+begin_note\nHi.\n#+end_note\n"))
+         (html (site-render-body (site-read-item f 'page))))
+    (random t)
+    (should (string-match-p "id=\"org[0-9a-f]+\"" html))
+    (should (equal html (site-render-body (site-read-item f 'page))))))
+
 (ert-deftest site-render-md-alerts ()
   (let* ((f (site-test--file "about.md"
                              (concat "---\ntitle: About\n---\n\n"

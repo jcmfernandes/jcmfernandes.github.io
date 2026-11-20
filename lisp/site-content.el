@@ -143,6 +143,9 @@ Signal an error naming FILE if export fails."
           (org-html-doctype "html5")
           (org-html-html5-fancy t)
           (org-export-filter-link-functions '(site--org-site-links)))
+      ;; Org draws element ids (`orgb48280d') from `random'; seeding it makes
+      ;; them the same on every build.
+      (random (file-name-nondirectory file))
       (condition-case e
           (org-export-as 'html nil nil t)
         (error (error "%s: org export failed: %s" file (error-message-string e)))))))
