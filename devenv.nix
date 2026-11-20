@@ -14,6 +14,10 @@ in
     pkgs.imagemagick
   ];
 
+  enterShell = ''
+    export PATH="$DEVENV_ROOT/bin:$PATH"
+  '';
+
   # Install pinned Emacs packages. Skipped when the lockfile hasn't changed
   # since the last thaw.
   tasks."site:deps" = {
