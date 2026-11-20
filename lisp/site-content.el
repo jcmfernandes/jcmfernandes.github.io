@@ -137,7 +137,6 @@ Signal an error naming FILE if export fails."
       (org-mode))
     (let ((org-export-use-babel t)
           (org-confirm-babel-evaluate nil)
-          (org-babel-python-command "python3")
           (org-export-with-toc nil)
           (org-export-with-section-numbers nil)
           (org-html-htmlize-output-type 'css)

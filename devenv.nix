@@ -10,7 +10,7 @@ in
     pkgs.git
     pkgs.jq
     pkgs.watchexec
-    pkgs.python3
+    pkgs.darkhttpd
     pkgs.imagemagick
   ];
 
@@ -61,7 +61,7 @@ in
       export SITE_BASE_URL=http://localhost:8000
       export SITE_LIVE_RELOAD=1
       mkdir -p public
-      python3 -m http.server --directory public --bind 127.0.0.1 8000 &
+      darkhttpd public --addr 127.0.0.1 --port 8000 &
       server=$!
       trap 'kill $server' EXIT
       # Watch the whole repo, not individual dirs: a dir that gets deleted and
