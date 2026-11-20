@@ -34,7 +34,6 @@ header { text-align: center; }
 .logo img {
   display: inline-block;
   margin: 1.5rem 0;
-  width: 41rem; /* old 493px size, scaled like the text */
   max-width: 100%;
   height: auto;
 }

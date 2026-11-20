@@ -10,15 +10,12 @@ mode=$1 art=$2 out=$3
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-# The logo renders at 2x so it stays sharp when scaled up; the icon at 1x.
-s=1; [[ $mode == logo ]] && s=2
-
 render=(magick -background black -fill white -font "$LOGO_FONT")
 
 sed 's/[^█]/ /g' "$art" > "$tmp/blocks.txt"
 sed 's/█/ /g' "$art" > "$tmp/shadow.txt"
-"${render[@]}" +antialias -pointsize $((24 * s)) -interline-spacing $((-6 * s)) label:@"$tmp/blocks.txt" "$tmp/blocks.png"
-"${render[@]}" +antialias -pointsize $((24 * s)) -interline-spacing $((-6 * s)) label:@"$tmp/shadow.txt" "$tmp/shadow.png"
+"${render[@]}" +antialias -pointsize 24 -interline-spacing -6 label:@"$tmp/blocks.txt" "$tmp/blocks.png"
+"${render[@]}" +antialias -pointsize 24 -interline-spacing -6 label:@"$tmp/shadow.txt" "$tmp/shadow.png"
 
 read -r w h < <(magick identify -format '%w %h\n' "$tmp/blocks.png")
 q=$((h / 4))
@@ -35,11 +32,11 @@ magick "$tmp/b.png" "$tmp/s.png" -compose lighten -composite "$tmp/art.png"
 
 case $mode in
   logo)
-    "${render[@]}" -fill '#aaaaaa' -pointsize $((14 * s)) label:"$4" "$tmp/sub.png"
-    magick "$tmp/art.png" -bordercolor black -border $((20 * s))x$((10 * s)) \
-      \( "$tmp/sub.png" -bordercolor black -border 0x$((8 * s)) \) \
+    "${render[@]}" -fill '#aaaaaa' -pointsize 14 label:"$4" "$tmp/sub.png"
+    magick "$tmp/art.png" -bordercolor black -border 20x10 \
+      \( "$tmp/sub.png" -bordercolor black -border 0x8 \) \
       -background black -gravity center -append +repage \
-      -bordercolor black -border $((10 * s)) -depth 8 -strip -define webp:lossless=true "$out"
+      -bordercolor black -border 10 -depth 8 -strip -define webp:lossless=true "$out"
     ;;
   icon)
     magick "$tmp/art.png" -trim +repage -bordercolor black -border 3 \
