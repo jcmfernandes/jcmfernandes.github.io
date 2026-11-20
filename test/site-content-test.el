@@ -128,6 +128,25 @@
     (should (string-match-p "<em>world</em>" html))
     (should-not (string-match-p "title:" html))))
 
+(ert-deftest site-render-org-alert ()
+  (let ((f (site-test--file "about.org"
+                            "#+TITLE: About\n\n#+begin_important\nA *hard* fork.\n#+end_important\n")))
+    (should (string-match-p "<div class=\"important\"[^>]*>[[:space:]]*<p>[[:space:]]*A <b>hard</b> fork."
+                            (site-render-body (site-read-item f 'page))))))
+
+(ert-deftest site-render-md-alerts ()
+  (let* ((f (site-test--file "about.md"
+                             (concat "---\ntitle: About\n---\n\n"
+                                     "> [!IMPORTANT]  \n> A **hard** fork.\n> Really.\n\n"
+                                     "> [!WARNING]\n> Hot.\n\n"
+                                     "> [!BOGUS]\n> Kept.\n\n"
+                                     "> Plain quote.\n")))
+         (html (site-render-body (site-read-item f 'page))))
+    (should (string-match-p "<div class=\"important\">[[:space:]]*<p>A <strong>hard</strong> fork.[[:space:]]Really.</p>" html))
+    (should (string-match-p "<div class=\"warning\">[[:space:]]*<p>Hot.</p>" html))
+    (should (string-match-p "<blockquote>[[:space:]]*<p>\\[!BOGUS\\]" html))
+    (should (string-match-p "<blockquote>[[:space:]]*<p>Plain quote.</p>" html))))
+
 (ert-deftest site-with-html-appends-html ()
   (let ((f (site-test--file "about.md" "---\ntitle: About\n---\n\nHi.\n")))
     (should (string-match-p "<p>Hi.</p>"

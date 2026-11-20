@@ -118,6 +118,26 @@ header { text-align: center; }
   font-size: min(12px, 100cqi / 75 / 0.61);
 }
 
+/* Alerts: Org special blocks and Markdown GitHub alerts. */
+.article :is(.note, .tip, .important, .warning, .caution) {
+  margin: 1em 0;
+  border: 1px solid var(--black);
+  padding: 0 8px;
+}
+.article :is(.note, .tip, .important, .warning, .caution)::before {
+  display: block;
+  margin: 0 -8px;
+  background: var(--cyan);
+  border-bottom: 1px solid var(--black);
+  padding: 4px 4px 4px 6px;
+  font-weight: 700;
+}
+.article .note::before { content: "NOTE"; }
+.article .tip::before { content: "TIP"; }
+.article .important::before { content: "IMPORTANT"; }
+.article .warning::before { content: "WARNING"; }
+.article .caution::before { content: "CAUTION"; }
+
 footer {
   max-width: 685px;
   margin: 0 auto;

@@ -16,6 +16,11 @@
 (defvar site-babel-languages '(emacs-lisp)
   "Org Babel languages allowed to run during export.")
 
+(defconst site--pandoc-alerts-filter
+  (expand-file-name "alerts.lua"
+                    (file-name-directory (or load-file-name buffer-file-name)))
+  "Pandoc Lua filter turning GitHub alerts into divs.")
+
 (defconst site--pandoc-meta-template
   (expand-file-name "pandoc-meta.tpl"
                     (file-name-directory (or load-file-name buffer-file-name))))
@@ -148,7 +153,8 @@ Signal an error naming FILE if export fails."
   (let ((file (plist-get item :file)))
     (if (eq (plist-get item :format) 'org)
         (site--org-html file)
-      (site--pandoc file "-f" "markdown" "-t" "html"))))
+      (site--pandoc file "-f" "markdown" "-t" "html"
+                    (concat "--lua-filter=" site--pandoc-alerts-filter)))))
 
 (defun site-with-html (item)
   "Return ITEM with :html set to its rendered body."
