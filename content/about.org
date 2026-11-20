@@ -9,7 +9,8 @@
 
 GitHub: https://github.com/jcmfernandes \\
 LinkedIn: https://www.linkedin.com/in/jcmfernandes/ \\
-Email: joao [at] moreirafernandes.com
+Email: joao [at] moreirafernandes.com \\
+GPG: [[https://keys.openpgp.org/vks/v1/by-fingerprint/87EBBA558A1892E217DD9B864CC9B8914857393F][=87EB BA55 8A18 92E2 17DD 9B86 4CC9 B891 4857 393F=]]
 
 \vert------
 
