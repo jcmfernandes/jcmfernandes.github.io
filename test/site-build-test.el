@@ -182,6 +182,17 @@
     (should-not (string-match-p "<[a-z]+[^>]*/>" (replace-regexp-in-string
                                                    "<\\(meta\\|link\\|img\\)[^>]*/>" "" post)))))
 
+(ert-deftest site-build-footer-links-commit ()
+  (let* ((sha (car (process-lines "git" "-C" site-test-fixture "rev-parse" "HEAD")))
+         (index (site-test--read (site-test--build nil) "index.html")))
+    (should (string-match-p
+             (format "<footer>|=\\[ EOF \\]=---  João Tester | <a href=\"https://github.com/example/site/commit/%s\">%s</a></footer>"
+                     sha (substring sha 0 8))
+             index))))
+
+(ert-deftest site-commit-outside-git ()
+  (should-not (site--commit (site-test--tree '(("x" . ""))))))
+
 (ert-deftest site-build-feed ()
   (let* ((out (site-test--build nil))
          (feed (car (with-temp-buffer

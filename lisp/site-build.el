@@ -21,6 +21,9 @@
 (defvar site-title "Untitled" "Site title.")
 (defvar site-author "Anonymous" "Site author.")
 (defvar site-base-url "http://localhost:8000" "Absolute site URL, no trailing slash.")
+(defvar site-repo-url nil
+  "Source repo URL, no trailing slash. The footer links the built commit
+under REPO/commit/. Nil: no link.")
 (defvar site-live-reload nil
   "Non-nil (preview only): pages reload when /.build changes.")
 
@@ -35,6 +38,16 @@ fetch a fresh copy whenever it changes. Nil if there is no stylesheet.")
       (with-temp-buffer
         (insert-file-contents-literally css)
         (substring (secure-hash 'sha256 (current-buffer)) 0 10)))))
+
+(defvar site-commit nil
+  "Full hash of the commit being built, or nil outside a git checkout.")
+
+(defun site--commit (root)
+  "Return the HEAD commit hash of ROOT's git checkout, or nil."
+  (with-temp-buffer
+    (and (eq 0 (ignore-errors
+                 (call-process "git" nil '(t nil) nil "-C" root "rev-parse" "HEAD")))
+         (string-trim (buffer-string)))))
 
 (defconst site--content-re "\\`[^.#].*\\.\\(org\\|md\\)\\'"
   "Content file names. Skips dotfiles and Emacs lock files (`.#x.org').")
@@ -149,6 +162,7 @@ build leaves the previous output in place."
          (tags (site-tags posts))
          (static (expand-file-name "static" root))
          (site-css-version (site--css-version static))
+         (site-commit (site--commit root))
          (rendered
           (append
            (mapcar (lambda (page) (site--page (plist-get page :url) (tpl-page page))) pages)

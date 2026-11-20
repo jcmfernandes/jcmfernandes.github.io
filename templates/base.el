@@ -65,7 +65,10 @@
                           (img ((src . "/logo.webp") (alt . ,site-title)))))
                (main ((class . "around")) ,@body)
                ,(tpl-nav)
-               (footer () ,(format "|=[ EOF ]=---  %s" site-author))
+               (footer () ,(format "|=[ EOF ]=---  %s" site-author)
+                       ,@(when (and site-commit site-repo-url)
+                           `(" | " (a ((href . ,(concat site-repo-url "/commit/" site-commit)))
+                                      ,(substring site-commit 0 8)))))
                ,@(when site-live-reload
                    `((script () (raw-string ,tpl--live-reload-js)))))))
 ;;; base.el ends here
