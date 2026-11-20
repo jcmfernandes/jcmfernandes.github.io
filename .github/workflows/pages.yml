@@ -23,12 +23,25 @@ jobs:
 
       - uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086 # v31.11.5
 
+      # Reuse the Nix store across runs; a devenv change starts a new cache.
+      - uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('devenv.nix', 'devenv.yaml', 'devenv.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 3G
+
       - uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
         with:
           name: devenv
 
       - name: Install devenv
         run: nix profile add nixpkgs#devenv
+
+      # Reuse the pinned Emacs packages; a version change starts a new cache.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: straight
+          key: straight-${{ hashFiles('straight/versions/default.el') }}
 
       - name: Build
         run: devenv tasks run site:build --show-output
