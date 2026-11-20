@@ -1,21 +1,21 @@
 ;;; post.el --- Blog post  -*- lexical-binding: t -*-
 
-(defun tpl--banner-line (&optional text)
-  "Phrack banner line, 75 wide, framing TEXT; all dashes if TEXT is nil."
+(defun tpl--banner-line (width &optional text)
+  "Phrack banner line, WIDTH wide, framing TEXT; all dashes if TEXT is nil."
   (if (null text)
-      (concat "|=" (make-string 71 ?-) "=|")
-    (let* ((free (max 0 (- 65 (string-width text))))
+      (concat "|=" (make-string (- width 4) ?-) "=|")
+    (let* ((free (max 0 (- width 10 (string-width text))))
            (left (/ free 2)))
       (concat "|=" (make-string left ?-) "=[ " text " ]="
               (make-string (- free left) ?-) "=|"))))
 
-(defun tpl-banner (title)
-  "Phrack-style banner for TITLE, wrapped to keep dashes on both sides."
-  (mapconcat #'identity
-             `(,(tpl--banner-line)
-               ,@(mapcar #'tpl--banner-line (split-string (string-fill title 59) "\n"))
-               ,(tpl--banner-line))
-             "\n"))
+(defun tpl-banner (title &optional width)
+  "Phrack-style banner for TITLE, WIDTH (default 75) columns wide.
+TITLE wraps to keep at least 3 dashes on both sides."
+  (let ((width (or width 75)))
+    (mapconcat (lambda (text) (tpl--banner-line width text))
+               `(nil ,@(split-string (string-fill title (- width 16)) "\n") nil)
+               "\n")))
 
 (defun tpl-post (post)
   "Page for POST: title bar, date/tags bar, banner and article box."
@@ -27,6 +27,7 @@
           ,@(when (plist-get post :tags)
               `(" | " (strong () "Tags") " : " ,@(tpl-tag-links (plist-get post :tags)))))
      (article ((class . "framed article"))
-              (pre ((class . "banner")) ,(tpl-banner (plist-get post :title)))
+              (pre ((class . "banner banner-wide")) ,(tpl-banner (plist-get post :title)))
+              (pre ((class . "banner banner-narrow")) ,(tpl-banner (plist-get post :title) 42))
               (raw-string ,(plist-get post :html))))))
 ;;; post.el ends here

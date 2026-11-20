@@ -105,7 +105,9 @@ header { text-align: center; }
   overflow-x: auto;
 }
 .article img { max-width: 100%; height: auto; }
-/* 75 columns; shrink the font so narrow screens fit them all. */
+/* Two banners: 75 columns, and 42 for boxes too narrow to fit 75 at
+   12px (75 * 0.61em * 12px = 549px). The font shrinks only if even
+   42 columns don't fit. 0.61em: a generous monospace glyph width. */
 .article .banner {
   width: fit-content;
   margin: 1em auto;
@@ -116,6 +118,11 @@ header { text-align: center; }
   overflow: hidden;
   line-height: 1.2;
   font-size: min(12px, 100cqi / 75 / 0.61);
+}
+.article .banner-narrow { display: none; font-size: min(12px, 100cqi / 42 / 0.61); }
+@container (max-width: 549px) {
+  .article .banner-wide { display: none; }
+  .article .banner-narrow { display: block; }
 }
 
 /* Alerts: Org special blocks and Markdown GitHub alerts. */

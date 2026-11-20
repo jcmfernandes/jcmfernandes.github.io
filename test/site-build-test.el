@@ -27,6 +27,15 @@
                               (butlast (cdr lines)) " ")
                    title))))
 
+(ert-deftest tpl-banner-narrow-width ()
+  (let* ((title "on daily team updates that don't suck")
+         (lines (split-string (tpl-banner title 42) "\n")))
+    (should (equal lines
+                   '("|=--------------------------------------=|"
+                     "|=---=[ on daily team updates that ]=---=|"
+                     "|=-----------=[ don't suck ]=-----------=|"
+                     "|=--------------------------------------=|")))))
+
 (ert-deftest site-load-config-env-override ()
   (let ((root (site-test--tree '(("site.el" . ";; -*- lexical-binding: t -*-\n(setq site-base-url \"https://example.com/\")")))))
     (with-environment-variables (("SITE_BASE_URL" nil))
@@ -159,7 +168,8 @@
     (should-not (string-match-p "href=\"/tags/\"" index))
     (should (string-match-p "href=\"/tags/lisp/\"" post))
     (should (string-match-p "42" post))
-    (should (string-match-p "<article[^>]*><pre class=\"banner\">|=-+=|\n|=-+=\\[ Hello \\]=-+=|" post))
+    (should (string-match-p "<article[^>]*><pre class=\"banner banner-wide\">|=-\\{71\\}=|\n|=-+=\\[ Hello \\]=-+=|" post))
+    (should (string-match-p "<pre class=\"banner banner-narrow\">|=-\\{38\\}=|\n|=-+=\\[ Hello \\]=-+=|" post))
     (should (string-match-p "<img src=\"/logo.webp\" alt=\"Fixture\"/>" post))
     (should (string-match-p "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\"/>" post))
     (should-not (string-match-p "<[a-z]+[^>]*/>" (replace-regexp-in-string
