@@ -16,7 +16,7 @@ body {
   margin: 2px;
   background: var(--black);
   color: var(--white);
-  font: 12px sans-serif;
+  font: 1rem sans-serif;
 }
 
 a:link, a:visited { color: var(--white); font-weight: 700; text-decoration: none; }
@@ -25,22 +25,22 @@ a:hover, a:active { text-decoration: underline; }
 .nav {
   text-align: center;
   letter-spacing: 1px;
-  font-size: 11px;
+  font-size: 0.9rem;
   font-weight: 700;
-  padding: 6px;
+  padding: 0.5rem;
 }
 
 header { text-align: center; }
 .logo img {
   display: inline-block;
-  margin: 20px 0;
+  margin: 1.5rem 0;
   max-width: 100%;
   height: auto;
 }
 
 .around {
   display: block;
-  max-width: 685px;
+  max-width: 57rem;
   margin: 0 auto;
   border: 1px solid var(--gray);
   padding: 1px;
@@ -53,14 +53,14 @@ header { text-align: center; }
   background: var(--cyan);
   color: var(--black);
   border-bottom: 1px solid var(--black);
-  padding: 4px 4px 4px 6px;
+  padding: 0.3rem 0.3rem 0.3rem 0.5rem;
 }
 
 .opt-bottom {
   background: var(--silver);
   color: var(--black);
   border-bottom: 1px solid var(--black);
-  padding: 4px 4px 4px 6px;
+  padding: 0.3rem 0.3rem 0.3rem 0.5rem;
 }
 
 .opt a, .opt-bottom a { color: var(--black); }
@@ -69,10 +69,10 @@ header { text-align: center; }
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 11px;
+  font-size: 0.9rem;
 }
 .tissue td {
-  padding: 3px 5px;
+  padding: 0.25rem 0.4rem;
   vertical-align: top;
   color: var(--white);
   background: color-mix(in srgb, var(--bright-blue) 70%, var(--blue));
@@ -90,23 +90,26 @@ header { text-align: center; }
   display: block;
   background: var(--white);
   color: var(--black);
-  font: 12px/1.5 monospace;
-  padding: 5px 20px 20px;
+  font: 1rem/1.5 monospace;
+  padding: 0.4rem 1.5rem 1.5rem;
   overflow-x: auto;
   container-type: inline-size;
   font-variant-ligatures: none;
+}
+@media (max-width: 40rem) {
+  .article { padding-inline: 0.75rem; }
 }
 .article a:link, .article a:visited { color: var(--blue); }
 .article pre {
   background: #f4f4f4;
   border: 1px solid var(--black);
-  border-radius: 10px;
-  padding: 8px;
+  border-radius: 0.8rem;
+  padding: 0.6rem;
   overflow-x: auto;
 }
 .article img { max-width: 100%; height: auto; }
 /* Two banners: 75 columns, and 42 for boxes too narrow to fit 75 at
-   12px (75 * 0.61em * 12px = 549px). The font shrinks only if even
+   full size (75 * 0.61 = 45.75rem). The font shrinks only if even
    42 columns don't fit. 0.61em: a generous monospace glyph width. */
 .article .banner {
   width: fit-content;
@@ -117,10 +120,10 @@ header { text-align: center; }
   background: none;
   overflow: hidden;
   line-height: 1.2;
-  font-size: min(12px, 100cqi / 75 / 0.61);
+  font-size: min(1rem, 100cqi / 75 / 0.61);
 }
-.article .banner-narrow { display: none; font-size: min(12px, 100cqi / 42 / 0.61); }
-@container (max-width: 549px) {
+.article .banner-narrow { display: none; font-size: min(1rem, 100cqi / 42 / 0.61); }
+@container (max-width: 45.75rem) {
   .article .banner-wide { display: none; }
   .article .banner-narrow { display: block; }
 }
@@ -129,14 +132,14 @@ header { text-align: center; }
 .article :is(.note, .tip, .important, .warning, .caution) {
   margin: 1em 0;
   border: 1px solid var(--black);
-  padding: 0 8px;
+  padding: 0 0.6rem;
 }
 .article :is(.note, .tip, .important, .warning, .caution)::before {
   display: block;
-  margin: 0 -8px;
+  margin: 0 -0.6rem;
   background: var(--cyan);
   border-bottom: 1px solid var(--black);
-  padding: 4px 4px 4px 6px;
+  padding: 0.3rem 0.3rem 0.3rem 0.5rem;
   font-weight: 700;
 }
 .article .note::before { content: "NOTE"; }
@@ -146,12 +149,12 @@ header { text-align: center; }
 .article .caution::before { content: "CAUTION"; }
 
 footer {
-  max-width: 685px;
+  max-width: 57rem;
   margin: 0 auto;
   text-align: right;
   border-top: 1px solid var(--gray);
-  padding: 4px;
-  font-size: 10px;
+  padding: 0.3rem;
+  font-size: 0.85rem;
 }
 
 /* Code: Org (htmlize classes) and pandoc (short classes). */
