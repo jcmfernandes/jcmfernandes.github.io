@@ -1,0 +1,7 @@
+#+TITLE: I am
+#+DATE: <2026-11-19 Thu>
+#+FILETAGS: :personal:
+
+This space is primarily for myself. Rants, mainly about software engineering and society.
+
+Are you not entertained?
