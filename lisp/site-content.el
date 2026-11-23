@@ -138,21 +138,27 @@ Org reads `[[/posts/x/]]' as an absolute file path; on the site it is a URL."
     (string-trim (replace-regexp-in-string "[^a-z0-9]+" "-" (downcase (concat bare)))
                  "-+" "-+")))
 
-(defun site--org-heading-ids ()
+(defun site--org-heading-ids (numbered)
   "Give current buffer's headings without a CUSTOM_ID one slugified from their title.
-Repeated titles get -2, -3, ... suffixes."
-  (let ((taken (make-hash-table :test #'equal)))
+Repeated titles get -2, -3, ... suffixes. With NUMBERED, exported top-level
+headings are numbered from 0, like the CSS that shows the numbers, and their
+ids follow Phrack's: \"--[ 0x02 - What to say\" becomes `---0x02---what-to-say'."
+  (let ((taken (make-hash-table :test #'equal))
+        (section -1))
     (org-map-entries
      (lambda () (when-let* ((id (org-entry-get nil "CUSTOM_ID"))) (puthash id t taken))))
     (org-map-entries
      (lambda ()
-       (unless (org-entry-get nil "CUSTOM_ID")
-         (let* ((base (site--slugify (org-link-display-format (org-get-heading t t t t))))
-                (id base)
-                (n 1))
-           (unless (string-empty-p base)
+       (let ((slug (site--slugify (org-link-display-format (org-get-heading t t t t)))))
+         (when (and numbered (= (org-current-level) 1)
+                    (not (org-in-commented-heading-p))
+                    (not (member "noexport" (org-get-tags))))
+           (setq slug (format "---0x%02x---%s" (cl-incf section) slug)))
+         (unless (or (org-entry-get nil "CUSTOM_ID") (string-empty-p slug))
+           (let ((id slug)
+                 (n 1))
              (while (gethash id taken)
-               (setq id (format "%s-%d" base (cl-incf n))))
+               (setq id (format "%s-%d" slug (cl-incf n))))
              (puthash id t taken)
              (org-entry-put nil "CUSTOM_ID" id))))))))
 
@@ -169,7 +175,6 @@ Signal an error naming FILE if export fails."
     (setq default-directory (file-name-directory file))
     (let ((org-mode-hook nil))
       (org-mode))
-    (site--org-heading-ids)
     (let ((org-export-use-babel t)
           (org-confirm-babel-evaluate nil)
           (org-export-with-toc (and toc 1))
@@ -183,6 +188,10 @@ Signal an error naming FILE if export fails."
       ;; Org draws element ids (`orgb48280d') from `random'; seeding it makes
       ;; them the same on every build.
       (random (file-name-nondirectory file))
+      (site--org-heading-ids
+       (or (plist-get (org-export-get-environment 'html) :with-toc)
+           (seq-some (lambda (kw) (string-match-p "headlines" (cadr kw)))
+                     (org-collect-keywords '("TOC")))))
       (condition-case e
           (org-export-as 'html nil nil t)
         (error (error "%s: org export failed: %s" file (error-message-string e)))))))

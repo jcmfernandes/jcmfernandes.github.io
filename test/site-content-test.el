@@ -192,6 +192,33 @@
     (should (string-match-p "<h2 id=\"see-the-site\">" html))
     (should (string-match-p "<h2 id=\"mine\">" html))))
 
+(defconst site-test--numbered-body
+  (concat "\n* What to say?\n** Sub\n* Kept\n:PROPERTIES:\n:CUSTOM_ID: mine\n:END:\n"
+          "* COMMENT Hidden\n* Gone :noexport:\n* Last\n"))
+
+(ert-deftest site-render-org-numbered-heading-ids ()
+  (let* ((f (site-test--file "posts/2026-11-23-ids.org"
+                             (concat "#+TITLE: T\n#+DATE: 2026-11-23\n" site-test--numbered-body)))
+         (html (site-render-body (site-read-item f 'post))))
+    (should (string-match-p "<h2 id=\"---0x00---what-to-say\">" html))
+    (should (string-match-p "<h3 id=\"sub\">" html))
+    (should (string-match-p "<h2 id=\"mine\">" html))
+    (should (string-match-p "<h2 id=\"---0x02---last\">" html))))
+
+(ert-deftest site-render-org-numbered-heading-ids-with-toc-keyword ()
+  (let ((f (site-test--file "posts/2026-11-23-ids.org"
+                            (concat "#+TITLE: T\n#+DATE: 2026-11-23\n#+OPTIONS: toc:nil\n"
+                                    "#+TOC: headlines 1\n" site-test--numbered-body))))
+    (should (string-match-p "<h2 id=\"---0x00---what-to-say\">"
+                            (site-render-body (site-read-item f 'post))))))
+
+(ert-deftest site-render-org-unnumbered-heading-ids-without-toc ()
+  (let ((f (site-test--file "posts/2026-11-23-ids.org"
+                            (concat "#+TITLE: T\n#+DATE: 2026-11-23\n#+OPTIONS: toc:nil\n"
+                                    site-test--numbered-body))))
+    (should (string-match-p "<h2 id=\"what-to-say\">"
+                            (site-render-body (site-read-item f 'post))))))
+
 (ert-deftest site-render-md-alerts ()
   (let* ((f (site-test--file "about.md"
                              (concat "---\ntitle: About\n---\n\n"
