@@ -154,7 +154,8 @@
     (should toc)
     (should (string-match-p "<a href=\"#one\">One</a>" toc))
     (should (string-match-p "<a href=\"#two\">Two</a>" toc))
-    (should-not (string-match-p "Sub" toc))))
+    (should-not (string-match-p "Sub" toc))
+    (should (string-match-p "<h2><a href=\"#table-of-contents\">Table of Contents</a></h2>" toc))))
 
 (ert-deftest site-render-org-post-toc-opt-out ()
   (let ((f (site-test--file "posts/2026-11-23-toc.org"

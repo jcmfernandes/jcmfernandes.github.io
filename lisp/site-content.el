@@ -125,6 +125,12 @@ Signal an error naming FILE if metadata is missing or invalid."
 Org reads `[[/posts/x/]]' as an absolute file path; on the site it is a URL."
   (replace-regexp-in-string "\\(href\\|src\\)=\"file:///" "\\1=\"/" text))
 
+(defun site--org-toc-self-link (text _backend _info)
+  "Make each table of contents heading in exported TEXT link to its table."
+  (replace-regexp-in-string
+   "<nav id=\"\\(table-of-contents[^\"]*\\)\"\\([^>]*\\)>\n<h\\([1-6]\\)>\\([^<]*\\)</h\\3>"
+   "<nav id=\"\\1\"\\2>\n<h\\3><a href=\"#\\1\">\\4</a></h\\3>" text t))
+
 (defun site--slugify (s)
   "Return S lowercased, accents dropped, other runs of non-alphanumerics as `-'."
   (let ((bare (seq-remove (lambda (c) (eq (get-char-code-property c 'general-category) 'Mn))
@@ -172,7 +178,8 @@ Signal an error naming FILE if export fails."
           (org-html-htmlize-output-type 'css)
           (org-html-doctype "html5")
           (org-html-html5-fancy t)
-          (org-export-filter-link-functions '(site--org-site-links)))
+          (org-export-filter-link-functions '(site--org-site-links))
+          (org-export-filter-final-output-functions '(site--org-toc-self-link)))
       ;; Org draws element ids (`orgb48280d') from `random'; seeding it makes
       ;; them the same on every build.
       (random (file-name-nondirectory file))

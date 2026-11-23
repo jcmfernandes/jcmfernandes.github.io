@@ -137,7 +137,7 @@ header { text-align: center; }
   pad: 2 "0";
 }
 #table-of-contents { margin-block: 3em; }
-#table-of-contents h2::before { content: "--[ "; }
+#table-of-contents h2 > a::before { content: "--[ "; }
 #table-of-contents ul { counter-reset: toc -1; }
 #table-of-contents li { counter-increment: toc; }
 #table-of-contents li > a { font-weight: normal; }
