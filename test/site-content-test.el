@@ -201,7 +201,7 @@
                              (concat "#+TITLE: T\n#+DATE: 2026-11-23\n" site-test--numbered-body)))
          (html (site-render-body (site-read-item f 'post))))
     (should (string-match-p "<h2 id=\"---0x00---what-to-say\">" html))
-    (should (string-match-p "<h3 id=\"sub\">" html))
+    (should (string-match-p "<h3 id=\"----sub\">" html))
     (should (string-match-p "<h2 id=\"mine\">" html))
     (should (string-match-p "<h2 id=\"---0x02---last\">" html))))
 

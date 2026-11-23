@@ -148,6 +148,7 @@ header { text-align: center; }
 .article:has(#table-of-contents) .outline-2 > h2 > a::before {
   content: "--[ 0x" counter(section, toc-hex) " - ";
 }
+.article:has(#table-of-contents) .outline-3 > h3 > a::before { content: "---[ "; }
 .article * + .outline-2 { margin-top: 2.5em; }
 
 /* Alerts: Org special blocks and Markdown GitHub alerts. */

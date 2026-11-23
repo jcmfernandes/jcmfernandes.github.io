@@ -142,7 +142,8 @@ Org reads `[[/posts/x/]]' as an absolute file path; on the site it is a URL."
   "Give current buffer's headings without a CUSTOM_ID one slugified from their title.
 Repeated titles get -2, -3, ... suffixes. With NUMBERED, exported top-level
 headings are numbered from 0, like the CSS that shows the numbers, and their
-ids follow Phrack's: \"--[ 0x02 - What to say\" becomes `---0x02---what-to-say'."
+ids follow Phrack's: \"--[ 0x02 - What to say\" becomes `---0x02---what-to-say'.
+Their sub-headings get \"---[ Sub\", so `----sub'."
   (let ((taken (make-hash-table :test #'equal))
         (section -1))
     (org-map-entries
@@ -150,10 +151,12 @@ ids follow Phrack's: \"--[ 0x02 - What to say\" becomes `---0x02---what-to-say'.
     (org-map-entries
      (lambda ()
        (let ((slug (site--slugify (org-link-display-format (org-get-heading t t t t)))))
-         (when (and numbered (= (org-current-level) 1)
-                    (not (org-in-commented-heading-p))
-                    (not (member "noexport" (org-get-tags))))
-           (setq slug (format "---0x%02x---%s" (cl-incf section) slug)))
+         (when numbered
+           (pcase (org-current-level)
+             ((and 1 (guard (not (or (org-in-commented-heading-p)
+                                     (member "noexport" (org-get-tags))))))
+              (setq slug (format "---0x%02x---%s" (cl-incf section) slug)))
+             (2 (setq slug (concat "----" slug)))))
          (unless (or (org-entry-get nil "CUSTOM_ID") (string-empty-p slug))
            (let ((id slug)
                  (n 1))
