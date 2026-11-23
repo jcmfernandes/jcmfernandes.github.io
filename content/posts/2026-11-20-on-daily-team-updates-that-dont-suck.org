@@ -2,6 +2,8 @@
 #+DATE: 2026-11-20
 #+FILETAGS: :sweng:
 
+* Introduction
+
 #+begin_note
 I wrote this in 2021. IMO, it's pretty timeless, so here it is.
 #+end_note
@@ -11,9 +13,7 @@ I wrote this in 2021. IMO, it's pretty timeless, so here it is.
 Jason Yip wrote an [[https://martinfowler.com/articles/itsNotJustStandingUp.html][amazing article]] on Martin Fowler's website about how to run efficient and effective daily team updates. This post leans heavily on it. For all intents and purposes, daily team updates and daily standups are the same.
 
 * What are daily team updates for?
-:PROPERTIES:
-:CUSTOM_ID: what-are-daily-team-update-sessions-for
-:END:
+
 Daily team updates follow the [[https://en.wikipedia.org/wiki/Anna_Karenina_principle][Anna Karenina Principle]]: all good ones are alike, each bad one is bad in its own way. Interestingly, the medium strongly affects their efficiency but not so much their effectiveness. While synchronous in-person or video updates are, for example, prone to storytelling or problem solving that should be left for later, they aren't inherently less effective than their asynchronous written counterpart.
 
 An effective daily team update must achieve the following goals (shamelessly copying from Jason's article because it's perfect):
@@ -26,9 +26,7 @@ An effective daily team update must achieve the following goals (shamelessly cop
 #+end_quote
 
 * What to say
-:PROPERTIES:
-:CUSTOM_ID: what-to-say
-:END:
+
 Answer the following questions:
 
 1. *Any blockers or impediments? Is there anything you need help with?*
@@ -69,9 +67,7 @@ Another example:
    1. Nothing. Read the blockers.
 
 * Common antipatterns
-:PROPERTIES:
-:CUSTOM_ID: common-antipatterns
-:END:
+
 Circling back to the recipe we talked about before, please beware the following:
 
 - Saying just "meetings".
@@ -81,3 +77,9 @@ Circling back to the recipe we talked about before, please beware the following:
 - Saying just "continue to work on XPTO-789".
 
 All of these tell the team you were busy, not what changed.
+
+* Conclusion
+
+Once more: daily team updates aren't status updates. They exist so the team shares goals, coordinates, helps each other, and feels like a team.
+
+Start with what you need, then what you'll do, then what changed. Give enough context that nobody has to open Jira to follow you. And if something matters, don't save it for tomorrow's update. Say it now.
