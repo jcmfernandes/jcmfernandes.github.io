@@ -100,7 +100,7 @@ header { text-align: center; }
   .article { padding-inline: 0.75rem; }
 }
 .article a:link, .article a:visited { color: var(--blue); }
-.article :is(h2, h3, h4, h5, h6) > a:is(:link, :visited) { color: inherit; }
+.article :is(h2, h3, h4, h5, h6, #table-of-contents li) > a:is(:link, :visited) { color: inherit; }
 .article pre {
   background: #f4f4f4;
   border: 1px solid var(--black);
@@ -140,6 +140,7 @@ header { text-align: center; }
 #table-of-contents h2::before { content: "--[ "; }
 #table-of-contents ul { counter-reset: toc -1; }
 #table-of-contents li { counter-increment: toc; }
+#table-of-contents li > a { font-weight: normal; }
 #table-of-contents li > a::before { content: "[0x" counter(toc, toc-hex) "] "; }
 /* Not on .article: its container-type walls counters in. */
 .article > :first-child { counter-reset: section -1; }
