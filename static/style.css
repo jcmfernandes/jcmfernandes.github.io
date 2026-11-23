@@ -128,6 +128,23 @@ header { text-align: center; }
   .article .banner-narrow { display: block; }
 }
 
+/* Org's table of contents and the sections it lists, Phrack style:
+   "--[ Table of Contents", "* [0x01] ...", "--[ 0x01 - ...". */
+@counter-style toc-hex {
+  system: numeric;
+  symbols: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "A" "B" "C" "D" "E" "F";
+  pad: 2 "0";
+}
+#table-of-contents { margin-block: 3em; }
+#table-of-contents h2::before { content: "--[ "; }
+#table-of-contents li::before { content: "[0x" counter(list-item, toc-hex) "] "; }
+.article:has(#table-of-contents) { counter-reset: section; }
+.article:has(#table-of-contents) .outline-2 { counter-increment: section; }
+.article:has(#table-of-contents) .outline-2 > h2::before {
+  content: "--[ 0x" counter(section, toc-hex) " - ";
+}
+.article * + .outline-2 { margin-top: 2.5em; }
+
 /* Alerts: Org special blocks and Markdown GitHub alerts. */
 .article :is(.note, .tip, .important, .warning, .caution) {
   margin: 1em 0;

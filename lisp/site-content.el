@@ -124,8 +124,10 @@ Signal an error naming FILE if metadata is missing or invalid."
 Org reads `[[/posts/x/]]' as an absolute file path; on the site it is a URL."
   (replace-regexp-in-string "\\(href\\|src\\)=\"file:///" "\\1=\"/" text))
 
-(defun site--org-html (file)
+(defun site--org-html (file toc)
   "Export Org FILE's body to an HTML fragment. Run Babel blocks.
+With TOC, prepend a table of contents of top-level headings, unless FILE
+opts out with `#+OPTIONS: toc:nil'.
 Signal an error naming FILE if export fails."
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -137,7 +139,7 @@ Signal an error naming FILE if export fails."
       (org-mode))
     (let ((org-export-use-babel t)
           (org-confirm-babel-evaluate nil)
-          (org-export-with-toc nil)
+          (org-export-with-toc (and toc 1))
           (org-export-with-section-numbers nil)
           (org-html-htmlize-output-type 'css)
           (org-html-doctype "html5")
@@ -154,7 +156,7 @@ Signal an error naming FILE if export fails."
   "Return ITEM's body as an HTML fragment."
   (let ((file (plist-get item :file)))
     (if (eq (plist-get item :format) 'org)
-        (site--org-html file)
+        (site--org-html file (eq (plist-get item :kind) 'post))
       (site--pandoc file "-f" "markdown" "-t" "html"
                     (concat "--lua-filter=" site--pandoc-alerts-filter)))))
 

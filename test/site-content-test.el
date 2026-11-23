@@ -142,6 +142,32 @@
     (should (string-match-p "id=\"org[0-9a-f]+\"" html))
     (should (equal html (site-render-body (site-read-item f 'page))))))
 
+(defconst site-test--toc-body
+  "\n* One\n:PROPERTIES:\n:CUSTOM_ID: one\n:END:\nA\n** Sub\nB\n* Two\n:PROPERTIES:\n:CUSTOM_ID: two\n:END:\nC\n")
+
+(ert-deftest site-render-org-post-has-toc ()
+  (let* ((f (site-test--file "posts/2026-11-23-toc.org"
+                             (concat "#+TITLE: T\n#+DATE: 2026-11-23\n" site-test--toc-body)))
+         (html (site-render-body (site-read-item f 'post)))
+         (toc (and (string-match "<nav id=\"table-of-contents\"\\(?:.\\|\n\\)*?</nav>" html)
+                   (match-string 0 html))))
+    (should toc)
+    (should (string-match-p "<a href=\"#one\">One</a>" toc))
+    (should (string-match-p "<a href=\"#two\">Two</a>" toc))
+    (should-not (string-match-p "Sub" toc))))
+
+(ert-deftest site-render-org-post-toc-opt-out ()
+  (let ((f (site-test--file "posts/2026-11-23-toc.org"
+                            (concat "#+TITLE: T\n#+DATE: 2026-11-23\n#+OPTIONS: toc:nil\n"
+                                    site-test--toc-body))))
+    (should-not (string-match-p "table-of-contents"
+                                (site-render-body (site-read-item f 'post))))))
+
+(ert-deftest site-render-org-page-has-no-toc ()
+  (let ((f (site-test--file "about.org" (concat "#+TITLE: About\n" site-test--toc-body))))
+    (should-not (string-match-p "table-of-contents"
+                                (site-render-body (site-read-item f 'page))))))
+
 (ert-deftest site-render-md-alerts ()
   (let* ((f (site-test--file "about.md"
                              (concat "---\ntitle: About\n---\n\n"
