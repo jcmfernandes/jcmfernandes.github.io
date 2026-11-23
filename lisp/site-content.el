@@ -141,6 +141,7 @@ Signal an error naming FILE if export fails."
           (org-confirm-babel-evaluate nil)
           (org-export-with-toc (and toc 1))
           (org-export-with-section-numbers nil)
+          (org-html-self-link-headlines t)
           (org-html-htmlize-output-type 'css)
           (org-html-doctype "html5")
           (org-html-html5-fancy t)

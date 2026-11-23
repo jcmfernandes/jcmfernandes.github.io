@@ -168,6 +168,11 @@
     (should-not (string-match-p "table-of-contents"
                                 (site-render-body (site-read-item f 'page))))))
 
+(ert-deftest site-render-org-headings-link-to-themselves ()
+  (let ((f (site-test--file "about.org" (concat "#+TITLE: About\n" site-test--toc-body))))
+    (should (string-match-p "<h2 id=\"one\"><a href=\"#one\">One</a></h2>"
+                            (site-render-body (site-read-item f 'page))))))
+
 (ert-deftest site-render-md-alerts ()
   (let* ((f (site-test--file "about.md"
                              (concat "---\ntitle: About\n---\n\n"
