@@ -138,8 +138,11 @@ header { text-align: center; }
 }
 #table-of-contents { margin-block: 3em; }
 #table-of-contents h2::before { content: "--[ "; }
-#table-of-contents li > a::before { content: "[0x" counter(list-item, toc-hex) "] "; }
-.article:has(#table-of-contents) { counter-reset: section; }
+#table-of-contents ul { counter-reset: toc -1; }
+#table-of-contents li { counter-increment: toc; }
+#table-of-contents li > a::before { content: "[0x" counter(toc, toc-hex) "] "; }
+/* Not on .article: its container-type walls counters in. */
+.article > :first-child { counter-reset: section -1; }
 .article:has(#table-of-contents) .outline-2 { counter-increment: section; }
 .article:has(#table-of-contents) .outline-2 > h2 > a::before {
   content: "--[ 0x" counter(section, toc-hex) " - ";
