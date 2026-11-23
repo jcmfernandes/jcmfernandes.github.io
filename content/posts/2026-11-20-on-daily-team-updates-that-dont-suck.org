@@ -14,7 +14,7 @@ Jason Yip wrote an [[https://martinfowler.com/articles/itsNotJustStandingUp.html
 
 * What are daily team updates for?
 
-Daily team updates follow the [[https://en.wikipedia.org/wiki/Anna_Karenina_principle][Anna Karenina Principle]]: all good ones are alike, each bad one is bad in its own way. Interestingly, the medium strongly affects their efficiency but not so much their effectiveness. While synchronous in-person or video updates are, for example, prone to storytelling or problem solving that should be left for later, they aren't inherently less effective than their asynchronous written counterpart.
+Daily team updates follow the [[https://en.wikipedia.org/wiki/Anna_Karenina_principle][Anna Karenina principle]]: all good ones are alike, each bad one is bad in its own way. Interestingly, the medium strongly affects their efficiency but not so much their effectiveness. While synchronous in-person or video updates are, for example, prone to storytelling or problem solving that should be left for later, they aren't inherently less effective than their asynchronous written counterpart.
 
 An effective daily team update must achieve the following goals (shamelessly copying from Jason's article because it's perfect):
 
