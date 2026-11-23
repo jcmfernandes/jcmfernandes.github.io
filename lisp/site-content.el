@@ -5,6 +5,7 @@
 (require 'cl-lib)
 (require 'subr-x)
 (require 'time-date)
+(require 'ucs-normalize)
 (require 'org)
 ;; Load now so the `let' in `site--org-html' binds ox-html's variables
 ;; dynamically, not lexically.
@@ -124,6 +125,31 @@ Signal an error naming FILE if metadata is missing or invalid."
 Org reads `[[/posts/x/]]' as an absolute file path; on the site it is a URL."
   (replace-regexp-in-string "\\(href\\|src\\)=\"file:///" "\\1=\"/" text))
 
+(defun site--slugify (s)
+  "Return S lowercased, accents dropped, other runs of non-alphanumerics as `-'."
+  (let ((bare (seq-remove (lambda (c) (eq (get-char-code-property c 'general-category) 'Mn))
+                          (ucs-normalize-NFKD-string s))))
+    (string-trim (replace-regexp-in-string "[^a-z0-9]+" "-" (downcase (concat bare)))
+                 "-+" "-+")))
+
+(defun site--org-heading-ids ()
+  "Give current buffer's headings without a CUSTOM_ID one slugified from their title.
+Repeated titles get -2, -3, ... suffixes."
+  (let ((taken (make-hash-table :test #'equal)))
+    (org-map-entries
+     (lambda () (when-let* ((id (org-entry-get nil "CUSTOM_ID"))) (puthash id t taken))))
+    (org-map-entries
+     (lambda ()
+       (unless (org-entry-get nil "CUSTOM_ID")
+         (let* ((base (site--slugify (org-link-display-format (org-get-heading t t t t))))
+                (id base)
+                (n 1))
+           (unless (string-empty-p base)
+             (while (gethash id taken)
+               (setq id (format "%s-%d" base (cl-incf n))))
+             (puthash id t taken)
+             (org-entry-put nil "CUSTOM_ID" id))))))))
+
 (defun site--org-html (file toc)
   "Export Org FILE's body to an HTML fragment. Run Babel blocks.
 With TOC, prepend a table of contents of top-level headings, unless FILE
@@ -137,6 +163,7 @@ Signal an error naming FILE if export fails."
     (setq default-directory (file-name-directory file))
     (let ((org-mode-hook nil))
       (org-mode))
+    (site--org-heading-ids)
     (let ((org-export-use-babel t)
           (org-confirm-babel-evaluate nil)
           (org-export-with-toc (and toc 1))

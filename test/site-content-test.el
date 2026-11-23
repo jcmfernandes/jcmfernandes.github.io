@@ -173,6 +173,24 @@
     (should (string-match-p "<h2 id=\"one\"><a href=\"#one\">One</a></h2>"
                             (site-render-body (site-read-item f 'page))))))
 
+(ert-deftest site-slugify ()
+  (should (equal (site--slugify "What to say?") "what-to-say"))
+  (should (equal (site--slugify "  João's café, 2026! ") "joao-s-cafe-2026"))
+  (should (equal (site--slugify "?!") "")))
+
+(ert-deftest site-render-org-heading-ids-from-titles ()
+  (let* ((f (site-test--file "about.org"
+                             (concat "#+TITLE: About\n\n"
+                                     "* What to say?\n** Sub\n* What to say?\n"
+                                     "* See [[https://example.com][the site]]\n"
+                                     "* Kept\n:PROPERTIES:\n:CUSTOM_ID: mine\n:END:\n")))
+         (html (site-render-body (site-read-item f 'page))))
+    (should (string-match-p "<h2 id=\"what-to-say\">" html))
+    (should (string-match-p "<h3 id=\"sub\">" html))
+    (should (string-match-p "<h2 id=\"what-to-say-2\">" html))
+    (should (string-match-p "<h2 id=\"see-the-site\">" html))
+    (should (string-match-p "<h2 id=\"mine\">" html))))
+
 (ert-deftest site-render-md-alerts ()
   (let* ((f (site-test--file "about.md"
                              (concat "---\ntitle: About\n---\n\n"
